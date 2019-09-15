@@ -79,7 +79,7 @@ fun lengthInMeters(sagenes: Int, arshins: Int, vershoks: Int): Double {
  * Вывести значение того же угла в радианах (например, 0.63256).
  */
 fun angleInRadian(deg: Int, min: Int, sec: Int): Double {
-    return (deg * PI / 180) + (min * PI / (180 * 60)) + (sec * PI / (180 * 3600))
+    return (deg + min / 60.0 + sec / 3600.0) * PI / 180.0
 }
 
 /**
@@ -89,7 +89,7 @@ fun angleInRadian(deg: Int, min: Int, sec: Int): Double {
  * Например, расстояние между (3, 0) и (0, 4) равно 5
  */
 fun trackLength(x1: Double, y1: Double, x2: Double, y2: Double): Double {
-    return sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2))
+    return sqrt((x1 - x2).pow(2) + (y1 - y2).pow(2))
 }
 
 /**
@@ -119,8 +119,7 @@ fun travelMinutes(hoursDepart: Int, minutesDepart: Int, hoursArrive: Int, minute
  * Например, 100 рублей под 10% годовых превратятся в 133.1 рубля
  */
 fun accountInThreeYears(initial: Int, percent: Int): Double {
-    val newPercent = percent + 100
-    return ((initial * newPercent / 100.0) * newPercent / 100) * newPercent / 100
+    return initial * ((percent + 100.0) / 100.0).pow(3)
 }
 
 /**
