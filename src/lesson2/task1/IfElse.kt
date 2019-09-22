@@ -145,14 +145,26 @@ fun rookOrBishopThreatens(
  * Если такой треугольник не существует, вернуть -1.
  */
 fun triangleKind(a: Double, b: Double, c: Double): Int {
-    var mx = maxOf(a, b, c)
-    var mn = minOf(a, b, c)
-    var mean = if (a != mx && a != mn) a else if (b != mx && b != mn) b else c
-    if (mx <= mn + mean) {
-        if (mx.pow(2) < mn.pow(2) + mean.pow(2)) return 0
-        else if (mx.pow(2) == mn.pow(2) + mean.pow(2)) return 1
-        else return 2
-    } else return -1
+    if (a >= b && a >= c) {
+        if (a <= b + c) {
+            if (a * a < b * b + c * c) return 0
+            else if (a * a == b * b + c * c) return 1
+            else if (a * a > b * b + c * c) return 2
+        } else return -1
+    } else if (b >= a && b >= c) {
+        if (b <= a + c) {
+            if (b * b < a * a + c * c) return 0
+            else if (b * b == a * a + c * c) return 1
+            else if (b * b > a * a + c * c) return 2
+        } else return -1
+    } else {
+        if (c <= a + b) {
+            if (c * c < a * a + b * b) return 0
+            else if (c * c == a * a + b * b) return 1
+            else if (c * c > a * a + b * b) return 2
+        } else return -1
+    }
+    return 0
 }
 
 /**
