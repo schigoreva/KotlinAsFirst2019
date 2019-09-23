@@ -65,10 +65,12 @@ fun minBiRoot(a: Double, b: Double, c: Double): Double {
  * Мой возраст. Для заданного 0 < n < 200, рассматриваемого как возраст человека,
  * вернуть строку вида: «21 год», «32 года», «12 лет».
  */
-fun ageDescription(age: Int): String = if (age % 100 >= 11 && age % 100 <= 14) "$age лет"
-    else if (age % 10 <= 4 && age % 10 > 1) "$age года"
-    else if (age % 10 == 1) "$age год"
-    else "$age лет"
+fun ageDescription(age: Int): String = when {
+    age % 100 in 11..14 -> "$age лет"
+    age % 10 in 2..4 -> "$age года"
+    age % 10 == 1 -> "$age год"
+    else -> "$age лет"
+}
 
 /**
  * Простая
@@ -91,7 +93,7 @@ fun timeForHalfWay(
             s -= t2 * v2
             t += t2 + s / v3
         } else t += s / v2
-    }else t += s / v1
+    } else t += s / v1
     return t
 }
 
@@ -146,25 +148,30 @@ fun rookOrBishopThreatens(
  */
 fun triangleKind(a: Double, b: Double, c: Double): Int {
     if (a >= b && a >= c) {
-        if (a <= b + c) {
-            if (a * a < b * b + c * c) return 0
-            else if (a * a == b * b + c * c) return 1
-            else if (a * a > b * b + c * c) return 2
-        } else return -1
+        return if (a <= b + c) {
+            when {
+                a * a < b * b + c * c -> 0
+                a * a == b * b + c * c -> 1
+                else -> 2
+            }
+        } else -1
     } else if (b >= a && b >= c) {
-        if (b <= a + c) {
-            if (b * b < a * a + c * c) return 0
-            else if (b * b == a * a + c * c) return 1
-            else if (b * b > a * a + c * c) return 2
-        } else return -1
+        return if (b <= a + c) {
+            when {
+                b * b < a * a + c * c -> 0
+                b * b == a * a + c * c -> 1
+                else -> 2
+            }
+        } else -1
     } else {
-        if (c <= a + b) {
-            if (c * c < a * a + b * b) return 0
-            else if (c * c == a * a + b * b) return 1
-            else if (c * c > a * a + b * b) return 2
-        } else return -1
+        return if (c <= a + b) {
+            when {
+                c * c < a * a + b * b -> 0
+                c * c == a * a + b * b -> 1
+                else -> 2
+            }
+        } else -1
     }
-    return 0
 }
 
 /**
@@ -175,10 +182,10 @@ fun triangleKind(a: Double, b: Double, c: Double): Int {
  * Найти длину пересечения отрезков AB и CD.
  * Если пересечения нет, вернуть -1.
  */
-fun segmentLength(a: Int, b: Int, c: Int, d: Int): Int {
-    if (b < c || d < a) return -1
-    else if (a <= c && c <= b && b <= d) return b - c
-    else if (c <= a && a <= d && d <= b) return d - a
-    else if (a < c && d < b) return d - c
-    else return b - a
+fun segmentLength(a: Int, b: Int, c: Int, d: Int): Int = when {
+    b < c || d < a -> -1
+    c in a..b && b <= d -> b - c
+    a in c..d && d <= b -> d - a
+    a < c && d < b -> d - c
+    else -> b - a
 }
