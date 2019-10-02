@@ -147,22 +147,13 @@ fun rookOrBishopThreatens(
  * Если такой треугольник не существует, вернуть -1.
  */
 fun triangleKind(a: Double, b: Double, c: Double): Int {
-    var n1: Double
-    var n2: Double
-    if (a == maxOf(a, b, c)) {
-        n1 = c
-        n2 = b
-    } else if (b == maxOf(a, b, c)) {
-        n1 = c
-        n2 = a
-    } else {
-        n1 = b
-        n2 = a
-    }
-    return if (maxOf(a, b, c) <= n2 + n1) {
+    val n1 = maxOf(a, b, c)
+    val n3 = minOf(a, b, c)
+    val n2 = (a + b + c) - n1 - n3
+    return if (n1 <= n2 + n3) {
         when {
-            maxOf(a, b, c).pow(2) < n1 * n1 + n2 * n2 -> 0
-            maxOf(a, b, c).pow(2) == n1 * n1 + n2 * n2 -> 1
+            n1 * n1 < n2 * n2 + n3 * n3 -> 0
+            n1 * n1 == n3 * n3 + n2 * n2 -> 1
             else -> 2
         }
     } else -1
