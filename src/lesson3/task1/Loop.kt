@@ -209,7 +209,7 @@ fun sin(x: Double, eps: Double): Double {
         n += 2
         k *= x1.pow(2) / ((n - 1) * n)
     }
-    return ans + if (n % 4 == 1) k else -k
+    return ans
 }
 
 /**
@@ -231,7 +231,7 @@ fun cos(x: Double, eps: Double): Double {
         n += 2
         k *= x1.pow(2) / ((n - 1) * n)
     }
-    return ans + if (n % 4 == 0) k else -k
+    return ans
 }
 
 /**
@@ -260,15 +260,7 @@ fun revert(n: Int): Int {
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun isPalindrome(n: Int): Boolean {
-    var n1 = n % 10
-    var a = n / 10
-    while (a != 0) {
-        n1 = n1 * 10 + a % 10
-        a /= 10
-    }
-    return n1 == n
-}
+fun isPalindrome(n: Int): Boolean = revert(n) == n
 
 /**
  * Средняя
@@ -300,14 +292,14 @@ fun hasDifferentDigits(n: Int): Boolean {
 fun squareSequenceDigit(n: Int): Int {
     var k = 0
     var p = 1
-    val const = 10.0
+    val cnst = 10.0
     while (true) {
         var pr = p * p
         while (pr != 0) {
             pr /= 10
             k++
         }
-        if (k >= n) return ((p * p) / const.pow(k - n).toInt()) % 10
+        if (k >= n) return ((p * p) / cnst.pow(k - n).toInt()) % 10
         p++
     }
 }
