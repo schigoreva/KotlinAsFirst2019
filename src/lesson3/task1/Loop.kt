@@ -280,11 +280,7 @@ fun squareSequenceDigit(n: Int): Int {
     var p = 1
     val t = 10.0
     while (true) {
-        var pr = p * p
-        while (pr != 0) {
-            pr /= 10
-            k++
-        }
+        k += (p * p).toString().length
         if (k >= n) return ((p * p) / t.pow(k - n).toInt()) % 10
         p++
     }
@@ -305,12 +301,8 @@ fun fibSequenceDigit(n: Int): Int {
     var p2 = 1
     val t = 10.0
     while (true) {
-        var pr = p2
-        val pr1 = pr
-        while (pr != 0) {
-            pr /= 10
-            k++
-        }
+        val pr1 = p2
+        k += p2.toString().length
         if (k >= n) return (p2 / t.pow(k - n).toInt()) % 10
         p2 += p1
         p1 = pr1
