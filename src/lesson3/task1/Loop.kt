@@ -130,12 +130,7 @@ fun minDivisor(n: Int): Int {
  *
  * Для заданного числа n > 1 найти максимальный делитель, меньший n
  */
-fun maxDivisor(n: Int): Int {
-    for (i in 2..(sqrt(n.toDouble())).toInt()) {
-        if (n % i == 0) return n / i
-    }
-    return 1
-}
+fun maxDivisor(n: Int): Int = n / minDivisor(n)
 
 /**
  * Простая
@@ -144,15 +139,7 @@ fun maxDivisor(n: Int): Int {
  * Взаимно простые числа не имеют общих делителей, кроме 1.
  * Например, 25 и 49 взаимно простые, а 6 и 8 -- нет.
  */
-fun isCoPrime(m: Int, n: Int): Boolean {
-    var m1 = m
-    var n1 = n
-    while (min(n1, m1) != 0) {
-        if (m1 >= n1) m1 %= n1
-        else n1 %= m1
-    }
-    return max(m1, n1) == 1
-}
+fun isCoPrime(m: Int, n: Int): Boolean = m * n / lcm(m, n) == 1
 
 /**
  * Простая
@@ -162,9 +149,8 @@ fun isCoPrime(m: Int, n: Int): Boolean {
  * Например, для интервала 21..28 21 <= 5*5 <= 28, а для интервала 51..61 квадрата не существует.
  */
 fun squareBetweenExists(m: Int, n: Int): Boolean {
-    var m1 = sqrt(m.toDouble()).toInt()
+    var m1 = ceil(sqrt(m.toDouble())).toInt()
     val n1 = sqrt(n.toDouble()).toInt()
-    while (m1 * m1 < m) m1++
     return n1 - m1 >= 0
 }
 
@@ -292,14 +278,14 @@ fun hasDifferentDigits(n: Int): Boolean {
 fun squareSequenceDigit(n: Int): Int {
     var k = 0
     var p = 1
-    val cnst = 10.0
+    val t = 10.0
     while (true) {
         var pr = p * p
         while (pr != 0) {
             pr /= 10
             k++
         }
-        if (k >= n) return ((p * p) / cnst.pow(k - n).toInt()) % 10
+        if (k >= n) return ((p * p) / t.pow(k - n).toInt()) % 10
         p++
     }
 }
@@ -317,7 +303,7 @@ fun fibSequenceDigit(n: Int): Int {
     var k = 0
     var p1 = 0
     var p2 = 1
-    val const = 10.0
+    val t = 10.0
     while (true) {
         var pr = p2
         val pr1 = pr
@@ -325,7 +311,7 @@ fun fibSequenceDigit(n: Int): Int {
             pr /= 10
             k++
         }
-        if (k >= n) return (p2 / const.pow(k - n).toInt()) % 10
+        if (k >= n) return (p2 / t.pow(k - n).toInt()) % 10
         p2 += p1
         p1 = pr1
     }
