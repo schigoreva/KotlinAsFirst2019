@@ -242,7 +242,7 @@ fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): S
 fun canBuildFrom(chars: List<Char>, word: String): Boolean {
     word.toLowerCase()
     for (char in chars) if (char !in word) return false
-    return chars.isNotEmpty()
+    return chars.isNotEmpty() || word.isEmpty()
 }
 
 /**
