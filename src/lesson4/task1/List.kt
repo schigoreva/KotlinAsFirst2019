@@ -295,7 +295,42 @@ fun decimalFromString(str: String, base: Int): Int {
  * 90 = XC, 100 = C, 400 = CD, 500 = D, 900 = CM, 1000 = M.
  * Например: 23 = XXIII, 44 = XLIV, 100 = C
  */
-fun roman(n: Int): String = TODO()
+fun roman(n: Int): String {
+    var ans = ""
+    var cnt = 0
+    var n1 = n
+    while (n1 != 0) {
+        var str = ""
+        cnt++
+        val d = n1 % 10
+        n1 /= 10
+        if (d == 0) continue
+        if (cnt == 1) {
+            when (d) {
+                in 1..3 -> for (i in 0 until d) str += "I"
+                4 -> str = "IV"
+                in 5..8 -> for (i in 0 until (d - 4)) str += if (i == 0) "V" else "I"
+                else -> str = "IX"
+            }
+        } else if (cnt == 2) {
+            when (d) {
+                in 1..3 -> for (i in 0 until d) str += "X"
+                4 -> str = "XL"
+                in 5..8 -> for (i in 0 until (d - 4)) str += if (i == 0) "L" else "X"
+                else -> str = "XC"
+            }
+        } else if (cnt == 3) {
+            when (d) {
+                in 1..3 -> for (i in 0 until d) str += "C"
+                4 -> str = "CD"
+                in 5..8 -> for (i in 0 until (d - 4)) str += if (i == 0) "D" else "C"
+                else -> str = "CM"
+            }
+        } else for (i in 0 until d) str += "M"
+        ans = str + ans
+    }
+    return ans
+}
 
 /**
  * Очень сложная
