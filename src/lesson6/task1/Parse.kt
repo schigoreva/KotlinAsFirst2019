@@ -96,7 +96,7 @@ fun dateStrToDigit(str: String): String {
             day > 30 && (mth == 4 || mth == 6 || mth == 9 || mth == 11) -> ""
             day > 31 -> ""
             mth > 12 -> ""
-            else -> String.format("%02d.%02d.%04d", day, mth, yr)
+            else -> String.format("%02d.%02d.%d", day, mth, yr)
         }
     } catch (e: Exception) {
         return ""
