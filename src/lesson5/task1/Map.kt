@@ -227,7 +227,7 @@ fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): S
             ans = g.first
         }
     }
-    return if (ans == "") "null" else ans
+    return ans
 }
 
 /**
@@ -239,7 +239,13 @@ fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): S
  * Например:
  *   canBuildFrom(listOf('a', 'b', 'o'), "baobab") -> true
  */
-fun canBuildFrom(chars: List<Char>, word: String): Boolean = chars.toSet() == word.toLowerCase().toSet()
+fun canBuildFrom(chars: List<Char>, word: String): Boolean {
+    val word1 = word.toLowerCase().toSet()
+    chars.toSet()
+    val f = chars.intersect(word1)
+    return f == word1
+
+}
 
 /**
  * Средняя
