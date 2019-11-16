@@ -69,7 +69,40 @@ fun main() {
  * Обратите внимание: некорректная с точки зрения календаря дата (например, 30.02.2009) считается неверными
  * входными данными.
  */
-fun dateStrToDigit(str: String): String = TODO()
+fun dateStrToDigit(str: String): String {
+    try {
+        val data = str.split(" ")
+        val day = data[0].toInt()
+        val yr = data[2].toInt()
+        val month = when (data[1]) {
+            "января" -> "1"
+            "февраля" -> "2"
+            "марта" -> "3"
+            "апреля" -> "4"
+            "мая" -> "5"
+            "июня" -> "6"
+            "июля" -> "7"
+            "августа" -> "8"
+            "сентября" -> "9"
+            "октября" -> "10"
+            "ноября" -> "11"
+            "декабря" -> "12"
+            else -> "A"
+        }
+        val mth = month.toInt()
+        return when {
+            day > 29 && mth == 2 && (yr % 400 == 0 || (yr % 4 == 0 && yr % 100 != 0)) -> ""
+            day > 28 && mth == 2 && !(yr % 400 == 0 || (yr % 4 == 0 && yr % 100 != 0)) -> ""
+            day > 30 && (mth == 4 || mth == 6 || mth == 9 || mth == 11) -> ""
+            day > 31 -> ""
+            mth > 12 -> ""
+            else -> String.format("%02d.%02d.%04d", day, mth, yr)
+        }
+    } catch (e: Exception) {
+        return ""
+    }
+
+}
 
 /**
  * Средняя

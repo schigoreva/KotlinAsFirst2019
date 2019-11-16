@@ -185,17 +185,24 @@ fun collatzSteps(x: Int): Int = when {
  * Подумайте, как добиться более быстрой сходимости ряда при больших значениях x.
  * Использовать kotlin.math.sin и другие стандартные реализации функции синуса в этой задаче запрещается.
  */
+
+fun prt(k: Double, eps: Double, x1: Double, ans: Double, n: Int, nk: Int): Double {
+    var ans1 = ans
+    var n1 = n
+    var k1 = k
+    while (abs(k1) >= eps) {
+        ans1 += if (n1 % 4 == nk) k1 else -k1
+        n1 += 2
+        k1 *= x1.pow(2) / ((n1 - 1) * n1)
+    }
+    return ans1
+}
+
 fun sin(x: Double, eps: Double): Double {
     val x1 = x % (2 * PI)
-    var ans = x1
-    var k = x1.pow(3) / (2 * 3)
-    var n = 3
-    while (abs(k) >= eps) {
-        ans += if (n % 4 == 1) k else -k
-        n += 2
-        k *= x1.pow(2) / ((n - 1) * n)
-    }
-    return ans
+    val k = x1.pow(3) / (2 * 3)
+    val n = 3
+    return prt(k, eps, x1, x1, n, 1)
 }
 
 /**
@@ -209,15 +216,10 @@ fun sin(x: Double, eps: Double): Double {
  */
 fun cos(x: Double, eps: Double): Double {
     val x1 = x % (2 * PI)
-    var ans = 1.0
-    var k = x1.pow(2) / 2
-    var n = 2
-    while (k >= eps) {
-        ans += if (n % 4 == 0) k else -k
-        n += 2
-        k *= x1.pow(2) / ((n - 1) * n)
-    }
-    return ans
+    val ans = 1.0
+    val k = x1.pow(2) / 2
+    val n = 2
+    return prt(k, eps, x1, ans, n, 0)
 }
 
 /**
@@ -281,7 +283,11 @@ fun squareSequenceDigit(n: Int): Int {
     val t = 10.0
     while (true) {
         k += digitNumber(p * p)
-        if (k >= n) return ((p * p) / t.pow(k - n).toInt()) % 10
+        if (k >= n) {
+            val pp = p * p
+            val tpw = t.pow(k - n).toInt()
+            return (pp / tpw) % 10
+        }
         p++
     }
 }
@@ -303,7 +309,10 @@ fun fibSequenceDigit(n: Int): Int {
     while (true) {
         val pr1 = p2
         k += digitNumber(p2)
-        if (k >= n) return (p2 / t.pow(k - n).toInt()) % 10
+        if (k >= n) {
+            val tpw = t.pow(k - n).toInt()
+            return (p2 / tpw) % 10
+        }
         p2 += p1
         p1 = pr1
     }
