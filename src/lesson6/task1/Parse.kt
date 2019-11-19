@@ -114,7 +114,38 @@ fun dateStrToDigit(str: String): String {
  * Обратите внимание: некорректная с точки зрения календаря дата (например, 30 февраля 2009) считается неверными
  * входными данными.
  */
-fun dateDigitToStr(digital: String): String = TODO()
+fun dateDigitToStr(digital: String): String {
+    try {
+        val dr = digital.split(".")
+        val dy = dr[0].toInt()
+        val mnth = dr[1].toInt()
+        val yr = dr[2].toInt()
+        val month = when (mnth) {
+            1 -> " января "
+            2 -> " февраля "
+            3 -> " марта "
+            4 -> " апреля "
+            5 -> " мая "
+            6 -> " июня "
+            7 -> " июля "
+            8 -> " августа "
+            9 -> " сентября "
+            10 -> " октября "
+            11 -> " ноября "
+            12 -> " декабря "
+            else -> "A"
+        }
+        return when {
+            dy > 29 && mnth == 2 && (yr % 400 == 0 || (yr % 4 == 0 && yr % 100 != 0)) -> ""
+            dy > 28 && mnth == 2 && !(yr % 400 == 0 || (yr % 4 == 0 && yr % 100 != 0)) -> ""
+            dy > 30 && (mnth == 4 || mnth == 6 || mnth == 9 || mnth == 11) -> ""
+            dy > 31 || mnth > 12 || month == "A" || dr.size != 3 -> ""
+            else -> dy.toString() + month + dr[2]
+        }
+    } catch (e: Exception) {
+        return ""
+    }
+}
 
 /**
  * Средняя
@@ -166,8 +197,34 @@ fun bestHighJump(jumps: String): Int = TODO()
  * Вернуть значение выражения (6 для примера).
  * Про нарушении формата входной строки бросить исключение IllegalArgumentException
  */
-fun plusMinus(expression: String): Int = TODO()
+fun plusMinus(expression: String): Int {
+    try {
+        var ans = 0
+        var fl = false
+        var plm = true
+        var i = -1
+        while (i + 1 < expression.length) {
+            i++
+            if (expression[i] == ' ') continue
+            if (!fl && !(expression[i] == '+' || expression[i] == '-')) {
+                var ind = i
+                while (ind < expression.length && !(expression[ind] == '+' || expression[ind] == '-' || expression[ind] == ' ')) ind++
+                val ar = expression.substring(i, ind).toInt()
+                ans += if (plm) ar else -ar
+                fl = !fl
+                i = ind - 1
+            } else if (fl && (expression[i] == '+' || expression[i] == '-')) {
+                plm = expression[i] == '+'
+                fl = !fl
+            } else throw IllegalArgumentException()
+        }
 
+        if (fl) return ans
+        else throw IllegalArgumentException()
+    } catch (e: Exception) {
+        throw IllegalArgumentException()
+    }
+}
 /**
  * Сложная
  *
@@ -190,7 +247,25 @@ fun firstDuplicateIndex(str: String): Int = TODO()
  * или пустую строку при нарушении формата строки.
  * Все цены должны быть больше либо равны нуля.
  */
-fun mostExpensive(description: String): String = TODO()
+fun mostExpensive(description: String): String {
+    try {
+        var ans = ""
+        var cnt = 0.0
+        val lst = description.split(";").toMutableList()
+        lst[0] = " " + lst[0]
+        for (i in 0 until lst.size) {
+            val ls = lst[i].split(" ")
+            if (ls.size != 3) return ""
+            if (cnt < ls[2].toDouble()) {
+                cnt = ls[2].toDouble()
+                ans = ls[1]
+            }
+        }
+        return ans
+    } catch (e: Exception) {
+        return ""
+    }
+}
 
 /**
  * Сложная

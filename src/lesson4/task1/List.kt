@@ -3,7 +3,6 @@
 package lesson4.task1
 
 import lesson1.task1.discriminant
-import kotlin.math.pow
 import kotlin.math.sqrt
 
 /**
@@ -135,7 +134,9 @@ fun mean(list: List<Double>): Double = if (list.isNotEmpty()) list.sum() / list.
  */
 fun center(list: MutableList<Double>): MutableList<Double> {
     val n = mean(list)
-    for (i in 0 until list.size) list[i] -= n
+    for (i in 0 until list.size) {
+        list[i] -= n
+    }
     return list
 }
 
@@ -148,7 +149,9 @@ fun center(list: MutableList<Double>): MutableList<Double> {
  */
 fun times(a: List<Int>, b: List<Int>): Int {
     val list = a.toMutableList()
-    for (i in 0 until a.size) list[i] *= b[i]
+    for (i in 0 until a.size) {
+        list[i] *= b[i]
+    }
     return list.sum()
 }
 
@@ -181,7 +184,9 @@ fun polynom(p: List<Int>, x: Int): Int {
  * Обратите внимание, что данная функция должна изменять содержание списка list, а не его копии.
  */
 fun accumulate(list: MutableList<Int>): MutableList<Int> {
-    for (i in 1 until list.size) list[i] += list[i - 1]
+    for (i in 1 until list.size) {
+        list[i] += list[i - 1]
+    }
     return list
 }
 
@@ -195,7 +200,7 @@ fun accumulate(list: MutableList<Int>): MutableList<Int> {
 fun factorize(n: Int): List<Int> {
     var n1 = n
     val list = mutableListOf<Int>()
-    for (i in 2..(sqrt(n.toDouble()).toInt() + 1)) {
+    for (i in 2..sqrt(n.toDouble()).toInt()) {
         while (n1 % i == 0) {
             n1 /= i
             list += i
@@ -254,7 +259,9 @@ fun convert(n: Int, base: Int): List<Int> {
 fun convertToString(n: Int, base: Int): String {
     var str = ""
     val v = convert(n, base)
-    for (i in 0 until v.size) str += if (v[i] > 9) ('W' + v[i]).toString() else v[i].toString()
+    for (i in 0 until v.size) {
+        str += if (v[i] > 9) ('W' + v[i]).toString() else v[i].toString()
+    }
     return str
 }
 
