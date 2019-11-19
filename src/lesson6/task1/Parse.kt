@@ -250,7 +250,7 @@ fun firstDuplicateIndex(str: String): Int = TODO()
 fun mostExpensive(description: String): String {
     try {
         var ans = ""
-        var cnt = 0.0
+        var cnt = -1.0
         val lst = description.split(";").toMutableList()
         lst[0] = " " + lst[0]
         for (i in 0 until lst.size) {
