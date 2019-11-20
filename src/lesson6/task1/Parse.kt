@@ -161,7 +161,29 @@ fun dateDigitToStr(digital: String): String {
  *
  * PS: Дополнительные примеры работы функции можно посмотреть в соответствующих тестах.
  */
-fun flattenPhoneNumber(phone: String): String = TODO()
+fun flattenPhoneNumber(phone: String): String {
+    try {
+        var ans = ""
+        var fl = false
+        var fl1 = false
+        var cnt = 0
+        for (i in 0 until phone.length) {
+            if (i == 0 && phone[i] == '+') ans = "+"
+            else if (phone[i].toInt() - 48 in 0..9) {
+                ans += phone[i]
+                fl1 = fl
+            } else if ((phone[i] == '(' && fl) || (phone[i] == ')' && !fl) || (phone[i] == ')' && fl && !fl1)) return ""
+            else if (phone[i] == '(' || phone[i] == ')') {
+                cnt++
+                fl = !fl
+            } else if (phone[i] != '-' && phone[i] != ' ') return ""
+        }
+        return if (cnt != 0 && cnt != 2) ""
+        else ans
+    } catch (e: Exception) {
+        return ""
+    }
+}
 
 /**
  * Средняя
@@ -225,6 +247,7 @@ fun plusMinus(expression: String): Int {
         throw IllegalArgumentException()
     }
 }
+
 /**
  * Сложная
  *
@@ -234,7 +257,15 @@ fun plusMinus(expression: String): Int {
  * Вернуть индекс начала первого повторяющегося слова, или -1, если повторов нет.
  * Пример: "Он пошёл в в школу" => результат 9 (индекс первого 'в')
  */
-fun firstDuplicateIndex(str: String): Int = TODO()
+fun firstDuplicateIndex(str: String): Int {
+    var ans = 0
+    var lst = str.toLowerCase().split(' ')
+    for (i in 0 until lst.size - 1) {
+        if (lst[i] == lst[i + 1]) return ans
+        ans += lst[i].length + 1
+    }
+    return -1
+}
 
 /**
  * Сложная

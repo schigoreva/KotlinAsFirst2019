@@ -2,6 +2,9 @@
 
 package lesson5.task1
 
+import kotlin.math.max
+import kotlin.math.min
+
 /**
  * Пример
  *
@@ -241,7 +244,7 @@ fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): S
  */
 fun canBuildFrom(chars: List<Char>, word: String): Boolean {
     val word1 = word.toLowerCase().toSet()
-    var chars1 = chars.toMutableList()
+    val chars1 = chars.toMutableList()
     for (i in 0 until chars1.size) chars1[i] = chars1[i].toLowerCase()
     chars1.toSet()
     val f = chars1.intersect(word1)
@@ -290,12 +293,12 @@ fun extractRepeats(list: List<String>): Map<String, Int> {
 fun hasAnagrams(words: List<String>): Boolean {
     val cnt = mutableSetOf<Set<Char>>()
     for (word in words) {
-        val set = mutableSetOf<Char>()
+        val st = mutableSetOf<Char>()
         for (c in word) {
-            set.add(c)
+            st.add(c)
         }
-        if (cnt.contains(set)) return true
-        cnt += set
+        if (cnt.contains(st)) return true
+        cnt += st
     }
     return false
 }
@@ -345,7 +348,23 @@ fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<Stri
  *   findSumOfTwo(listOf(1, 2, 3), 4) -> Pair(0, 2)
  *   findSumOfTwo(listOf(1, 2, 3), 6) -> Pair(-1, -1)
  */
-fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> = TODO()
+fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
+    val mp = mutableMapOf<Int, MutableList<Int>>()
+    for (i in 0 until list.size) {
+        if (mp[list[i]] == null) mp += Pair(list[i], mutableListOf(i))
+        else mp[list[i]]!! += i
+    }
+    for ((first, second) in mp) {
+        if (first == number - first) {
+            if (second.size > 1) return Pair(second[0], second[1])
+        } else if (mp[number - first] != null) {
+            val a = second[0]
+            val b = mp[number - first]!![0]
+            return Pair(min(a, b), max(a, b))
+        }
+    }
+    return Pair(-1, -1)
+}
 
 /**
  * Очень сложная
