@@ -96,10 +96,9 @@ fun buildWordSet(text: List<String>): MutableSet<String> {
  */
 fun buildGrades(grades: Map<String, Int>): Map<Int, List<String>> {
     val ans = mutableMapOf<Int, MutableList<String>>()
-    for (elm in grades) {
-        val el = elm.toPair()
-        if (ans[el.second] == null) ans += Pair(el.second, mutableListOf(el.first))
-        else ans[el.second]!! += el.first
+    for ((first, second) in grades) {
+        if (ans[second] == null) ans += Pair(second, mutableListOf(first))
+        else ans[second]!! += first
     }
     return ans
 }
@@ -115,7 +114,9 @@ fun buildGrades(grades: Map<String, Int>): Map<Int, List<String>> {
  *   containsIn(mapOf("a" to "z"), mapOf("a" to "zee", "b" to "sweet")) -> false
  */
 fun containsIn(a: Map<String, String>, b: Map<String, String>): Boolean {
-    for (elm in a) if (elm.toPair().second != b[elm.toPair().first]) return false
+    for ((first, second) in a) {
+        if (second != b[first]) return false
+    }
     return true
 }
 
@@ -134,7 +135,9 @@ fun containsIn(a: Map<String, String>, b: Map<String, String>): Boolean {
  *     -> a changes to mutableMapOf() aka becomes empty
  */
 fun subtractOf(a: MutableMap<String, String>, b: Map<String, String>): MutableMap<String, String> {
-    for (elm in b) if (a[elm.toPair().first] == elm.toPair().second) a.remove(elm.toPair().first)
+    for ((first, second) in b) {
+        if (a[first] == second) a.remove(first)
+    }
     return a
 }
 
@@ -146,9 +149,9 @@ fun subtractOf(a: MutableMap<String, String>, b: Map<String, String>): MutableMa
  * т. е. whoAreInBoth(listOf("Марат", "Семён, "Марат"), listOf("Марат", "Марат")) == listOf("Марат")
  */
 fun whoAreInBoth(a: List<String>, b: List<String>): List<String> {
-    val ans = mutableSetOf<String>()
-    for (elm in a) if (elm in b) ans += elm
-    return ans.toList()
+    a.toSet()
+    b.toSet()
+    return a.intersect(b).toList()
 }
 
 /**
@@ -170,11 +173,10 @@ fun whoAreInBoth(a: List<String>, b: List<String>): List<String> {
  */
 fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<String, String> {
     val mapA1 = mapA.toMutableMap()
-    for (i in mapB) {
-        val g = i.toPair()
+    for ((first, second) in mapB) {
         when {
-            mapA1[g.first] == null -> mapA1 += g
-            mapA1[g.first] != g.second -> mapA1[g.first] += (", " + g.second)
+            mapA1[first] == null -> mapA1 += Pair(first, second)
+            mapA1[first] != second -> mapA1[first] += (", $second")
         }
     }
     return mapA1
@@ -272,13 +274,7 @@ fun extractRepeats(list: List<String>): Map<String, Int> {
         }
         cnt[s] = cnt[s]!! + 1
     }
-    val ans = mutableMapOf<String, Int>()
-    for ((first, second) in cnt) {
-        if (second != 1) {
-            ans += Pair(first, second)
-        }
-    }
-    return ans
+    return cnt.filter { it.value != 1 }
 }
 
 /**
@@ -328,7 +324,32 @@ fun hasAnagrams(words: List<String>): Boolean {
  *        )
  */
 
-fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<String>> = TODO()
+fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<String>> {
+    val ans = mutableMapOf<String, MutableSet<String>>()
+    val tp = mutableSetOf<String>()
+    for ((first, second) in friends) {
+        tp += first
+        tp += second
+    }
+    for (first in tp) {
+        val prt = mutableSetOf<String>(first)
+        val lst = mutableListOf<String>(first)
+        while (lst.size > 0) {
+            if (friends[lst[0]] == null) {
+                lst -= lst[0]
+                continue
+            }
+            val st = (friends[lst[0]] ?: error("")).toMutableSet()
+            st -= st.intersect(prt)
+            prt += st
+            lst += st
+            lst -= lst[0]
+        }
+        prt -= first
+        ans += Pair(first, prt)
+    }
+    return ans
+}
 
 
 /**
