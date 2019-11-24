@@ -302,38 +302,49 @@ fun decimalFromString(str: String, base: Int): Int {
  * 90 = XC, 100 = C, 400 = CD, 500 = D, 900 = CM, 1000 = M.
  * Например: 23 = XXIII, 44 = XLIV, 100 = C
  */
+
+fun helpPoman(cnt: Int, d: Int): String {
+    var str = ""
+    when (d) {
+        in 1..3 -> for (i in 0 until d) {
+            str += when (cnt) {
+                1 -> "I"
+                2 -> "X"
+                3 -> "C"
+                else -> "M"
+            }
+        }
+        4 -> str = when (cnt) {
+            1 -> "IV"
+            2 -> "XL"
+            else -> "CD"
+        }
+        in 5..8 -> for (i in 0 until (d - 4)) {
+            str += when (cnt) {
+                1 -> if (i == 0) "V" else "I"
+                2 -> if (i == 0) "L" else "X"
+                else -> if (i == 0) "D" else "C"
+            }
+        }
+        else -> str = when (cnt) {
+            1 -> "IX"
+            2 -> "XC"
+            else -> "CM"
+        }
+    }
+    return str
+}
+
 fun roman(n: Int): String {
     var ans = ""
     var cnt = 0
     var n1 = n
     while (n1 != 0) {
-        var str = ""
         cnt++
         val d = n1 % 10
         n1 /= 10
         if (d == 0) continue
-        when (cnt) {
-            1 -> when (d) {
-                in 1..3 -> for (i in 0 until d) str += "I"
-                4 -> str = "IV"
-                in 5..8 -> for (i in 0 until (d - 4)) str += if (i == 0) "V" else "I"
-                else -> str = "IX"
-            }
-            2 -> when (d) {
-                in 1..3 -> for (i in 0 until d) str += "X"
-                4 -> str = "XL"
-                in 5..8 -> for (i in 0 until (d - 4)) str += if (i == 0) "L" else "X"
-                else -> str = "XC"
-            }
-            3 -> when (d) {
-                in 1..3 -> for (i in 0 until d) str += "C"
-                4 -> str = "CD"
-                in 5..8 -> for (i in 0 until (d - 4)) str += if (i == 0) "D" else "C"
-                else -> str = "CM"
-            }
-            else -> for (i in 0 until d) str += "M"
-        }
-        ans = str + ans
+        ans = helpPoman(cnt, d) + ans
     }
     return ans
 }

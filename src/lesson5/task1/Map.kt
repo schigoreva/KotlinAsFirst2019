@@ -148,11 +148,7 @@ fun subtractOf(a: MutableMap<String, String>, b: Map<String, String>): MutableMa
  * В выходном списке не должно быть повторяюихся элементов,
  * т. е. whoAreInBoth(listOf("Марат", "Семён, "Марат"), listOf("Марат", "Марат")) == listOf("Марат")
  */
-fun whoAreInBoth(a: List<String>, b: List<String>): List<String> {
-    a.toSet()
-    b.toSet()
-    return a.intersect(b).toList()
-}
+fun whoAreInBoth(a: List<String>, b: List<String>): List<String> = a.intersect(b).toList()
 
 /**
  * Средняя
@@ -173,10 +169,10 @@ fun whoAreInBoth(a: List<String>, b: List<String>): List<String> {
  */
 fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<String, String> {
     val mapA1 = mapA.toMutableMap()
-    for ((first, second) in mapB) {
+    for ((name, phone) in mapB) {
         when {
-            mapA1[first] == null -> mapA1 += Pair(first, second)
-            mapA1[first] != second -> mapA1[first] += (", $second")
+            mapA1[name] == null -> mapA1 += Pair(name, phone)
+            mapA1[name] != phone -> mapA1[name] += (", $phone")
         }
     }
     return mapA1
@@ -195,15 +191,15 @@ fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<S
 fun averageStockPrice(stockPrices: List<Pair<String, Double>>): Map<String, Double> {
     val ans = mutableMapOf<String, Double>()
     val cnt = mutableMapOf<String, Int>()
-    for ((first, second) in stockPrices) {
-        if (ans[first] == null) {
-            ans += Pair(first, 0.0)
-            cnt += Pair(first, 0)
+    for ((item, cost) in stockPrices) {
+        if (ans[item] == null) {
+            ans += Pair(item, 0.0)
+            cnt += Pair(item, 0)
         }
-        ans[first] = ans[first]!! + second
-        cnt[first] = cnt[first]!! + 1
+        ans[item] = ans[item]!! + cost
+        cnt[item] = cnt[item]!! + 1
     }
-    for ((first, second) in cnt) ans[first] = ans[first]!! / second
+    for ((item, cost) in cnt) ans[item] = ans[item]!! / cost
     return ans
 }
 
@@ -225,11 +221,10 @@ fun averageStockPrice(stockPrices: List<Pair<String, Double>>): Map<String, Doub
 fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): String? {
     var c = -1.0
     var ans: String? = null
-    for (i in stuff) {
-        val g = i.toPair()
-        if (g.second.first == kind && (c == -1.0 || c > g.second.second)) {
-            c = g.second.second
-            ans = g.first
+    for ((name, sort) in stuff) {
+        if (sort.first == kind && (c == -1.0 || c > sort.second)) {
+            c = sort.second
+            ans = name
         }
     }
     return ans
@@ -245,13 +240,9 @@ fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): S
  *   canBuildFrom(listOf('a', 'b', 'o'), "baobab") -> true
  */
 fun canBuildFrom(chars: List<Char>, word: String): Boolean {
-    val word1 = word.toLowerCase().toSet()
-    val chars1 = chars.toMutableList()
-    for (i in 0 until chars1.size) chars1[i] = chars1[i].toLowerCase()
-    chars1.toSet()
-    val f = chars1.intersect(word1)
-    return f == word1
-
+    chars.map { it.toLowerCase() }
+    val f = chars.intersect(word.toLowerCase().toSet())
+    return f == word.toLowerCase().toSet()
 }
 
 /**
@@ -332,14 +323,14 @@ fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<Stri
         tp += second
     }
     for (first in tp) {
-        val prt = mutableSetOf<String>(first)
-        val lst = mutableListOf<String>(first)
+        val prt = mutableSetOf(first)
+        val lst = mutableListOf(first)
         while (lst.size > 0) {
             if (friends[lst[0]] == null) {
                 lst -= lst[0]
                 continue
             }
-            val st = (friends[lst[0]] ?: error("")).toMutableSet()
+            val st = friends.getOrDefault(lst[0], setOf()).toMutableSet()
             st -= st.intersect(prt)
             prt += st
             lst += st
