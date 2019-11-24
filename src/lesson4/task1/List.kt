@@ -300,48 +300,23 @@ fun decimalFromString(str: String, base: Int): Int {
  * Например: 23 = XXIII, 44 = XLIV, 100 = C
  */
 
-fun helpRoman(cnt: Int, d: Int): String {
-    var str = ""
-    when (d) {
-        in 1..3 -> for (i in 0 until d) {
-            str += when (cnt) {
-                1 -> "I"
-                2 -> "X"
-                3 -> "C"
-                else -> "M"
-            }
-        }
-        4 -> str = when (cnt) {
-            1 -> "IV"
-            2 -> "XL"
-            else -> "CD"
-        }
-        in 5..8 -> for (i in 0 until (d - 4)) {
-            str += when (cnt) {
-                1 -> if (i == 0) "V" else "I"
-                2 -> if (i == 0) "L" else "X"
-                else -> if (i == 0) "D" else "C"
-            }
-        }
-        else -> str = when (cnt) {
-            1 -> "IX"
-            2 -> "XC"
-            else -> "CM"
-        }
-    }
-    return str
-}
 
 fun roman(n: Int): String {
-    var ans = ""
+    var ans = buildString {}
     var cnt = 0
     var n1 = n
+    val trn = listOf(
+        listOf("I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX"),
+        listOf("X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX", "XC"),
+        listOf("C", "CC", "CCC", "CD", "D", "DC", "DCC", "DCCC", "CM"),
+        listOf("M", "MM", "MMM")
+    )
     while (n1 != 0) {
         cnt++
         val d = n1 % 10
         n1 /= 10
         if (d == 0) continue
-        ans = helpRoman(cnt, d) + ans
+        ans = trn[cnt - 1][d - 1] + ans
     }
     return ans
 }
@@ -354,3 +329,73 @@ fun roman(n: Int): String {
  * 23964 = "двадцать три тысячи девятьсот шестьдесят четыре"
  */
 fun russian(n: Int): String = TODO()
+/*{
+    if (n == 0) return "ноль"
+    var ans = buildString {}
+    var cnt = 0
+    var n1 = n
+    while (n1 != 0) {
+        var str = ""
+        val d = n1 % 10
+        n1 /= 10
+        cnt++
+        if (d == 0) continue
+        if (cnt % 3 == 1) {
+            if (n1 % 10 == 1) {
+                n1 /= 10
+                cnt++
+                str = when (d) {
+                    1 -> " одиннадцать"
+                    2 -> " двенадцать"
+                    3 -> " тринадцать"
+                    4 -> " четырнадцать"
+                    5 -> " пятнадцать"
+                    6 -> " шестнадцать"
+                    7 -> " семнадцать"
+                    8 -> " восемнадцать"
+                    else -> " девятнадцать"
+                }
+            } else if (d != 0) {
+                str = when (d) {
+                    1 -> " один"
+                    2 -> " два"
+                    3 -> " три"
+                    4 -> " четыре"
+                    5 -> " пять"
+                    6 -> " шесть"
+                    7 -> " семь"
+                    8 -> " восемь"
+                    else -> " девять"
+                }
+            }
+        } else if (cnt % 3 == 2) {
+            str = when (d) {
+                1 -> " десять"
+                2 -> " двадцать"
+                3 -> " тридцать"
+                4 -> " сорок"
+                5 -> " пятьдесят"
+                6 -> " шестьдесят"
+                7 -> " семьдесят"
+                8 -> " восемьдесят"
+                else -> " девяносто"
+            }
+        } else {
+            str = when (d) {
+                1 -> " сто"
+                2 -> " двести"
+                3 -> " триста"
+                4 -> " четыреста"
+                5 -> " пятьсот"
+                6 -> " шестьсот"
+                7 -> " семьсот"
+                8 -> " восемьсот"
+                else -> " девятьсот"
+            }
+        }
+        ans = str + ans
+    }
+    return ans
+}
+
+ */
