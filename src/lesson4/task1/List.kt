@@ -217,15 +217,7 @@ fun factorize(n: Int): List<Int> {
  * Результат разложения вернуть в виде строки, например 75 -> 3*5*5
  * Множители в результирующей строке должны располагаться по возрастанию.
  */
-fun factorizeToString(n: Int): String {
-    var str = ""
-    val v = factorize(n)
-    for (i in 0 until v.size) {
-        if (i != 0) str += "*"
-        str += v[i].toString()
-    }
-    return str
-}
+fun factorizeToString(n: Int): String = factorize(n).joinToString("*")
 
 /**
  * Средняя
@@ -257,12 +249,15 @@ fun convert(n: Int, base: Int): List<Int> {
  * (например, n.toString(base) и подобные), запрещается.
  */
 fun convertToString(n: Int, base: Int): String {
-    var str = ""
-    val v = convert(n, base)
-    for (i in 0 until v.size) {
-        str += if (v[i] > 9) ('W' + v[i]).toString() else v[i].toString()
+    val shift = 'W'
+    val v = convert(n, base).map {
+        if (it > 9) {
+            (shift + it).toString()
+        } else {
+            it.toString()
+        }
     }
-    return str
+    return v.joinToString("")
 }
 
 /**
@@ -288,8 +283,10 @@ fun decimal(digits: List<Int>, base: Int): Int = polynom(digits.reversed(), base
  */
 fun decimalFromString(str: String, base: Int): Int {
     val v = mutableListOf<Int>()
+    val chr = 'W'
+    val digit = '0'
     for (i in 0 until str.length) {
-        v += if (str[i] >= 'a') str[i] - 'W' else str[i] - '0'
+        v += if (str[i] >= 'a') str[i] - chr else str[i] - digit
     }
     return decimal(v.toList(), base)
 }
@@ -303,7 +300,7 @@ fun decimalFromString(str: String, base: Int): Int {
  * Например: 23 = XXIII, 44 = XLIV, 100 = C
  */
 
-fun helpPoman(cnt: Int, d: Int): String {
+fun helpRoman(cnt: Int, d: Int): String {
     var str = ""
     when (d) {
         in 1..3 -> for (i in 0 until d) {
@@ -344,7 +341,7 @@ fun roman(n: Int): String {
         val d = n1 % 10
         n1 /= 10
         if (d == 0) continue
-        ans = helpPoman(cnt, d) + ans
+        ans = helpRoman(cnt, d) + ans
     }
     return ans
 }
