@@ -3,6 +3,7 @@
 package lesson7.task1
 
 import java.io.File
+import kotlin.math.max
 
 /**
  * Пример
@@ -53,18 +54,28 @@ fun alignFile(inputName: String, lineLength: Int, outputName: String) {
  * Регистр букв игнорировать, то есть буквы е и Е считать одинаковыми.
  *
  */
-fun countSubstrings(inputName: String, substrings: List<String>): Map<String, Int> = TODO()
-/*{
+fun countSubstrings(inputName: String, substrings: List<String>): Map<String, Int> {
+    val ans = mutableMapOf<String, Int>()
     for (line in File(inputName).readLines()) {
-        val str = line.toLowerCase()
-        //println(str.count { it == 'e' })
+        for (item in substrings) {
+            val str1 = item.toLowerCase()
+            val str2 = line.toLowerCase()
+            var cnt = 0
+            for (i in 0 until str2.length - str1.length + 1) {
+                var has = 1
+                for (j in 0 until str1.length) {
+                    if (str1[j] != str2[i + j]) {
+                        has = 0
+                        break
+                    }
+                }
+                cnt += has
+            }
+            ans[item] = ans.getOrDefault(item, 0) + cnt
+        }
     }
-    val g= listOf(1,2,3,3)
-    print(g.toSet())
-
-    return mapOf()
-}*/
-
+    return ans
+}
 
 /**
  * Средняя
@@ -132,7 +143,51 @@ fun centerFile(inputName: String, outputName: String) {
  * 8) Если входной файл удовлетворяет требованиям 1-7, то он должен быть в точности идентичен выходному файлу
  */
 fun alignFileByWidth(inputName: String, outputName: String) {
-    TODO()
+    val lines = mutableListOf<String>()
+    var maxLen = 0
+    for (line in File(inputName).readLines()) {
+        lines.add(buildString {
+            var isSpace = true
+            for (c in line) {
+                if (c == ' ') {
+                    if (!isSpace) {
+                        append(c)
+                        isSpace = true
+                    }
+                } else {
+                    append(c)
+                    isSpace = false
+                }
+            }
+        })
+        maxLen = max(maxLen, lines[lines.size - 1].length)
+    }
+    val out = File(outputName).bufferedWriter()
+    for (line in lines) {
+        val words = line.split(' ')
+        if (words.size == 1) {
+            out.write(words[0])
+        } else if (words.isNotEmpty()) {
+            val cnt = maxLen - line.length
+            val oneBlock = cnt / (words.size - 1)
+            val cntBigBlocks = cnt - oneBlock * (words.size - 1)
+            out.write(buildString {
+                for (i in 0 until words.size - 1) {
+                    append(words[i])
+                    append(' ')
+                    for (j in 0 until oneBlock) {
+                        append(' ')
+                    }
+                    if (i < cntBigBlocks) {
+                        append(' ')
+                    }
+                }
+                append(words[words.size - 1])
+            })
+        }
+        out.newLine()
+    }
+    out.close()
 }
 
 /**
@@ -268,7 +323,56 @@ Suspendisse ~~et elit in enim tempus iaculis~~.
  * (Отступы и переносы строк в примере добавлены для наглядности, при решении задачи их реализовывать не обязательно)
  */
 fun markdownToHtmlSimple(inputName: String, outputName: String) {
-    TODO()
+    val mdMarkers = listOf("**", "*", "~~")
+    val htmlMarkers = listOf("b", "i", "s")
+    val used = mutableListOf(false, false, false);
+    val out = File(outputName).bufferedWriter()
+    out.write(buildString {
+        append("<html><body>")
+        var isNewParagraph = true;
+        for (line in File(inputName).readLines()) {
+            var i = 0
+            if (line.isEmpty()) {
+                if (!isNewParagraph) {
+                    append("</p>")
+                }
+                isNewParagraph = true
+                continue
+            }
+            if (isNewParagraph) {
+                append("<p>")
+                isNewParagraph = false
+            }
+            while (i < line.length) {
+                var flag = false
+                for (j in 0 until mdMarkers.size) {
+                    if (line.startsWith(mdMarkers[j], i)) {
+                        append('<')
+                        if (used[j]) {
+                            append('/')
+                            used[j] = false;
+                        } else {
+                            used[j] = true;
+                        }
+                        append(htmlMarkers[j])
+                        append('>')
+                        i += mdMarkers[j].length
+                        flag = true
+                    }
+                }
+                if (!flag) {
+                    append(line[i])
+                    i++
+                }
+            }
+            append('\n')
+        }
+        if (!isNewParagraph) {
+            append("</p>")
+        }
+        append("</body></html>")
+    })
+    out.close()
 }
 
 /**
@@ -371,7 +475,81 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
  * (Отступы и переносы строк в примере добавлены для наглядности, при решении задачи их реализовывать не обязательно)
  */
 fun markdownToHtmlLists(inputName: String, outputName: String) {
-    TODO()
+    val out = File(outputName).bufferedWriter()
+    val stack = mutableListOf<Int>()
+    val stackCnt = mutableListOf<Int>()
+    var cntLists = -1
+    var cntElements = -1
+    out.write(buildString {
+        append("<html><body>")
+        var last = -4
+        for (line in File(inputName).readLines()) {
+            var cnt = 0
+            while (cnt < line.length && line[cnt] == ' ') {
+                cnt++
+            }
+            while (cntElements >= 0 && cnt < stackCnt[cntElements]) {
+                append("</li>")
+                stackCnt.removeAt(cntElements)
+                cntElements--
+            }
+            if (cnt > last) {
+                if (line[cnt] == '*') {
+                    append("<ul>")
+                    stack.add(0)
+                } else {
+                    append("<ol>")
+                    stack.add(1)
+                }
+                cntLists++
+            } else if (cnt < last) {
+                if (stack[cntLists] == 0) {
+                    append("</ul>")
+                } else {
+                    append("</ol>")
+                }
+                stack.removeAt(cntLists)
+                cntLists--
+            }
+            while (cntElements >= 0 && cnt == stackCnt[cntElements]) {
+                append("</li>")
+                stackCnt.removeAt(cntElements)
+                cntElements--
+            }
+            last = cnt
+            if (line[cnt] == '*') {
+                append("<li>")
+                append(line.substring(cnt + 2, line.length))
+                stackCnt.add(cnt)
+                cntElements++
+            } else {
+                stackCnt.add(cnt)
+                while (cnt < line.length && line[cnt] != '.') {
+                    cnt++;
+                }
+                append("<li>")
+                append(line.substring(cnt + 2, line.length))
+                cntElements++
+            }
+        }
+        var cnt = last
+        while (cntLists != -1) {
+            while (cntElements != -1 && stackCnt[cntElements] >= cnt) {
+                append("</li>")
+                cntElements--
+            }
+            if (stack[cntLists] == 0) {
+                append("</ul>")
+            } else {
+                append("</ol>")
+            }
+            stack.removeAt(cntLists)
+            cntLists--
+            cnt -= 4
+        }
+        append("</body></html>")
+    })
+    out.close()
 }
 
 /**
@@ -382,8 +560,168 @@ fun markdownToHtmlLists(inputName: String, outputName: String) {
  * - Списки, отделённые друг от друга пустой строкой, являются разными и должны оказаться в разных параграфах выходного файла.
  *
  */
+fun checkList(line: String): Boolean {
+    if (line.isEmpty()) {
+        return false
+    }
+    var cnt = 0
+    while (cnt + 1 < line.length && line[cnt] == ' ') {
+        cnt++
+    }
+    if (line[cnt] == '*') return true
+    for (i in '0'..'9') {
+        if (line[cnt] == i) return true;
+    }
+    return false
+}
+
+fun markdownToHtmlListsInStrings(text: String): String {
+    val stack = mutableListOf<Int>()
+    val stackCnt = mutableListOf<Int>()
+    var cntLists = -1
+    var cntElements = -1
+    return buildString {
+        var last = -4
+        for (line in text.split("\n")) {
+            if (line.isEmpty()) {
+                continue
+            }
+            var cnt = 0
+            while (cnt < line.length && line[cnt] == ' ') {
+                cnt++
+            }
+            while (cntElements >= 0 && cnt < stackCnt[cntElements]) {
+                append("</li>")
+                stackCnt.removeAt(cntElements)
+                cntElements--
+            }
+            if (cnt > last) {
+                if (line[cnt] == '*') {
+                    append("<ul>")
+                    stack.add(0)
+                } else {
+                    append("<ol>")
+                    stack.add(1)
+                }
+                cntLists++
+            } else if (cnt < last) {
+                if (stack[cntLists] == 0) {
+                    append("</ul>")
+                } else {
+                    append("</ol>")
+                }
+                stack.removeAt(cntLists)
+                cntLists--
+            }
+            while (cntElements >= 0 && cnt == stackCnt[cntElements]) {
+                append("</li>")
+                stackCnt.removeAt(cntElements)
+                cntElements--
+            }
+            last = cnt
+            if (line[cnt] == '*') {
+                append("<li>")
+                append(line.substring(cnt + 2, line.length))
+                stackCnt.add(cnt)
+                cntElements++
+            } else {
+                stackCnt.add(cnt)
+                while (cnt < line.length && line[cnt] != '.') {
+                    cnt++;
+                }
+                append("<li>")
+                append(line.substring(cnt + 2, line.length))
+                cntElements++
+            }
+        }
+        var cnt = last
+        while (cntLists != -1) {
+            while (cntElements != -1 && stackCnt[cntElements] >= cnt) {
+                append("</li>")
+                cntElements--
+            }
+            if (stack[cntLists] == 0) {
+                append("</ul>")
+            } else {
+                append("</ol>")
+            }
+            stack.removeAt(cntLists)
+            cntLists--
+            cnt -= 4
+        }
+    }
+}
+
 fun markdownToHtml(inputName: String, outputName: String) {
-    TODO()
+    val mdMarkers = listOf("**", "*", "~~")
+    val htmlMarkers = listOf("b", "i", "s")
+    val used = mutableListOf(false, false, false);
+    val out = File(outputName).bufferedWriter()
+    out.write(buildString {
+        append("<html><body>")
+        var isNewParagraph = true;
+        val lines = File(inputName).readLines()
+        var curLine = 0
+        while (curLine < lines.size) {
+            var line = lines[curLine]
+            curLine++
+            var i = 0
+            var isLists = 0
+            append(markdownToHtmlListsInStrings(buildString {
+                while (checkList(line)) {
+                    append(line)
+                    append("\n")
+                    isLists = 1
+                    if (curLine < lines.size) {
+                        line = lines[curLine]
+                        curLine++
+                    } else {
+                        break
+                    }
+                }
+            }))
+            if (isLists == 1) continue
+            if (line.isEmpty()) {
+                if (!isNewParagraph) {
+                    append("</p>")
+                }
+                isNewParagraph = true
+                continue
+            }
+            if (isNewParagraph) {
+                append("<p>")
+                isNewParagraph = false
+            }
+            while (i < line.length) {
+                var flag = false
+                for (j in 0 until mdMarkers.size) {
+                    if (line.startsWith(mdMarkers[j], i)) {
+                        append('<')
+                        if (used[j]) {
+                            append('/')
+                            used[j] = false;
+                        } else {
+                            used[j] = true;
+                        }
+                        append(htmlMarkers[j])
+                        append('>')
+                        i += mdMarkers[j].length
+                        flag = true
+                    }
+                }
+                if (!flag) {
+                    append(line[i])
+                    i++
+                }
+            }
+            append('\n')
+        }
+        if (!isNewParagraph) {
+            append("</p>")
+        }
+        append("</body></html>")
+    })
+    out.close()
 }
 
 /**

@@ -302,23 +302,23 @@ fun decimalFromString(str: String, base: Int): Int {
 
 
 fun roman(n: Int): String {
-    var ans = buildString {}
     var cnt = 0
     var n1 = n
-    val trn = listOf(
+    val digits = listOf(
         listOf("I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX"),
         listOf("X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX", "XC"),
         listOf("C", "CC", "CCC", "CD", "D", "DC", "DCC", "DCCC", "CM"),
         listOf("M", "MM", "MMM")
     )
-    while (n1 != 0) {
-        cnt++
-        val d = n1 % 10
-        n1 /= 10
-        if (d == 0) continue
-        ans = trn[cnt - 1][d - 1] + ans
+    return buildString {
+        while (n1 != 0) {
+            cnt++
+            val d = n1 % 10
+            n1 /= 10
+            if (d == 0) continue
+            insert(0, digits[cnt - 1][d - 1])
+        }
     }
-    return ans
 }
 
 /**
@@ -328,74 +328,80 @@ fun roman(n: Int): String {
  * Например, 375 = "триста семьдесят пять",
  * 23964 = "двадцать три тысячи девятьсот шестьдесят четыре"
  */
-fun russian(n: Int): String = TODO()
-/*{
-    if (n == 0) return "ноль"
-    var ans = buildString {}
-    var cnt = 0
-    var n1 = n
-    while (n1 != 0) {
-        var str = ""
-        val d = n1 % 10
-        n1 /= 10
-        cnt++
-        if (d == 0) continue
-        if (cnt % 3 == 1) {
-            if (n1 % 10 == 1) {
-                n1 /= 10
-                cnt++
-                str = when (d) {
-                    1 -> " одиннадцать"
-                    2 -> " двенадцать"
-                    3 -> " тринадцать"
-                    4 -> " четырнадцать"
-                    5 -> " пятнадцать"
-                    6 -> " шестнадцать"
-                    7 -> " семнадцать"
-                    8 -> " восемнадцать"
-                    else -> " девятнадцать"
-                }
-            } else if (d != 0) {
-                str = when (d) {
-                    1 -> " один"
-                    2 -> " два"
-                    3 -> " три"
-                    4 -> " четыре"
-                    5 -> " пять"
-                    6 -> " шесть"
-                    7 -> " семь"
-                    8 -> " восемь"
-                    else -> " девять"
-                }
+fun getDigit(n: Int, d: Int, case: Int): String {
+    return when (d) {
+        0 -> ""
+        1 -> when (n) {
+            1 -> when (case) {
+                0 -> "один "
+                else -> "одна "
             }
-        } else if (cnt % 3 == 2) {
-            str = when (d) {
-                1 -> " десять"
-                2 -> " двадцать"
-                3 -> " тридцать"
-                4 -> " сорок"
-                5 -> " пятьдесят"
-                6 -> " шестьдесят"
-                7 -> " семьдесят"
-                8 -> " восемьдесят"
-                else -> " девяносто"
+            2 -> when (case) {
+                0 -> "два "
+                else -> "две "
             }
-        } else {
-            str = when (d) {
-                1 -> " сто"
-                2 -> " двести"
-                3 -> " триста"
-                4 -> " четыреста"
-                5 -> " пятьсот"
-                6 -> " шестьсот"
-                7 -> " семьсот"
-                8 -> " восемьсот"
-                else -> " девятьсот"
-            }
+            3 -> "три "
+            4 -> "четыре "
+            5 -> "пять "
+            6 -> "шесть "
+            7 -> "семь "
+            8 -> "восемь "
+            9 -> "девять "
+            else -> ""
         }
-        ans = str + ans
+        2 -> when (n / 10) {
+            0 -> getDigit(n % 10, 1, case)
+            1 -> when (n) {
+                11 -> "одиннадцать "
+                12 -> "двенадцать "
+                13 -> "тринадцать "
+                14 -> "четырнадцать "
+                15 -> "пятнадцать "
+                16 -> "шестнадцать "
+                17 -> "семьнадцать "
+                18 -> "восемьнадцать "
+                19 -> "девятнадцать "
+                else -> ""
+            }
+            else -> when (n / 10) {
+                2 -> "двадцать "
+                3 -> "тридцать "
+                4 -> "сорок "
+                5 -> "пятьдесят "
+                6 -> "шестьдесят "
+                7 -> "семьдесят "
+                8 -> "восемьдесят "
+                9 -> "девяносто "
+                else -> ""
+            } + getDigit(n % 10, 1, case)
+        }
+        3 -> when (n % 1000 / 100) {
+            1 -> "сто "
+            2 -> "двести "
+            3 -> "триста "
+            4 -> "четырста "
+            5 -> "пятьсот "
+            6 -> "шестьсот "
+            7 -> "семьсот "
+            8 -> "восемьсот "
+            9 -> "девятьсот "
+            else -> ""
+        } + getDigit(n % 100, 2, case)
+        else -> when (n / 1000) {
+            0 -> getDigit(n % 1000, 3, 0)
+            else -> getDigit(n / 1000, 3, 1) + when (n / 1000 % 10) {
+                1 -> "тысяча "
+                2 -> "тысячи "
+                3 -> "тысячи "
+                4 -> "тысячи "
+                else -> "тысяч "
+            } + getDigit(n % 1000, 3, 0)
+        }
     }
-    return ans
 }
 
- */
+fun russian(n: Int): String {
+    if (n == 0) return "ноль"
+    val ans = getDigit(n, 6, 0)
+    return ans.substring(0, ans.length - 1)
+}

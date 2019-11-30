@@ -416,4 +416,48 @@ fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
  *     450
  *   ) -> emptySet()
  */
-fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<String> = TODO()
+fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<String> {
+    val dp = Array(treasures.size) { Array(capacity + 1) { 0 } }
+    var cur = 0
+    val names = mutableListOf<String>()
+    for ((key, value) in treasures) {
+        names += key
+        if (cur == 0) {
+            if (value.first <= capacity) {
+                dp[cur][value.first] = value.second
+            }
+        } else {
+            for (j in 0 until capacity + 1) {
+                if (j >= value.first) {
+                    dp[cur][j] = max(dp[cur - 1][j - value.first] + value.second, dp[cur - 1][j])
+                } else {
+                    dp[cur][j] = dp[cur - 1][j]
+                }
+            }
+        }
+        cur++
+    }
+    cur--
+    val ans = mutableSetOf<String>()
+    names.reverse()
+    var w = 0
+    for (i in 0 until capacity + 1) {
+        if (dp[cur][i] > dp[cur][w]) {
+            w = i
+        }
+    }
+    for (i in names) {
+        if (cur == 0) {
+            if (w != 0) {
+                ans.add(i)
+            }
+        } else {
+            if (dp[cur][w] != dp[cur - 1][w]) {
+                ans.add(i)
+                w -= treasures.getOrDefault(i, Pair(0, 0)).second
+            }
+        }
+        cur--
+    }
+    return ans
+}

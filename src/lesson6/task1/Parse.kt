@@ -2,6 +2,8 @@
 
 package lesson6.task1
 
+import kotlin.math.max
+
 /**
  * Пример
  *
@@ -73,8 +75,8 @@ fun dateStrToDigit(str: String): String {
     try {
         val data = str.split(" ")
         val day = data[0].toInt()
-        val yr = data[2].toInt()
-        val month = when (data[1]) {
+        val year = data[2].toInt()
+        val monthStr = when (data[1]) {
             "января" -> "1"
             "февраля" -> "2"
             "марта" -> "3"
@@ -89,14 +91,14 @@ fun dateStrToDigit(str: String): String {
             "декабря" -> "12"
             else -> "A"
         }
-        val mth = month.toInt()
+        val monthDigit = monthStr.toInt()
         return when {
-            day > 29 && mth == 2 && (yr % 400 == 0 || (yr % 4 == 0 && yr % 100 != 0)) -> ""
-            day > 28 && mth == 2 && !(yr % 400 == 0 || (yr % 4 == 0 && yr % 100 != 0)) -> ""
-            day > 30 && (mth == 4 || mth == 6 || mth == 9 || mth == 11) -> ""
+            day > 29 && monthDigit == 2 && (year % 400 == 0 || (year % 4 == 0 && year % 100 != 0)) -> ""
+            day > 28 && monthDigit == 2 && !(year % 400 == 0 || (year % 4 == 0 && year % 100 != 0)) -> ""
+            day > 30 && (monthDigit == 4 || monthDigit == 6 || monthDigit == 9 || monthDigit == 11) -> ""
             day > 31 -> ""
-            mth > 12 -> ""
-            else -> String.format("%02d.%02d.%d", day, mth, yr)
+            monthDigit > 12 -> ""
+            else -> String.format("%02d.%02d.%d", day, monthDigit, year)
         }
     } catch (e: Exception) {
         return ""
@@ -116,11 +118,11 @@ fun dateStrToDigit(str: String): String {
  */
 fun dateDigitToStr(digital: String): String {
     try {
-        val dr = digital.split(".")
-        val dy = dr[0].toInt()
-        val mnth = dr[1].toInt()
-        val yr = dr[2].toInt()
-        val month = when (mnth) {
+        val data = digital.split(".")
+        val day = data[0].toInt()
+        val monthDigit = data[1].toInt()
+        val year = data[2].toInt()
+        val monthStr = when (monthDigit) {
             1 -> " января "
             2 -> " февраля "
             3 -> " марта "
@@ -136,11 +138,11 @@ fun dateDigitToStr(digital: String): String {
             else -> "A"
         }
         return when {
-            dy > 29 && mnth == 2 && (yr % 400 == 0 || (yr % 4 == 0 && yr % 100 != 0)) -> ""
-            dy > 28 && mnth == 2 && !(yr % 400 == 0 || (yr % 4 == 0 && yr % 100 != 0)) -> ""
-            dy > 30 && (mnth == 4 || mnth == 6 || mnth == 9 || mnth == 11) -> ""
-            dy > 31 || mnth > 12 || month == "A" || dr.size != 3 -> ""
-            else -> dy.toString() + month + dr[2]
+            day > 29 && monthDigit == 2 && (year % 400 == 0 || (year % 4 == 0 && year % 100 != 0)) -> ""
+            day > 28 && monthDigit == 2 && !(year % 400 == 0 || (year % 4 == 0 && year % 100 != 0)) -> ""
+            day > 30 && (monthDigit == 4 || monthDigit == 6 || monthDigit == 9 || monthDigit == 11) -> ""
+            day > 31 || monthDigit > 12 || monthStr == "A" || data.size != 3 -> ""
+            else -> day.toString() + monthStr + data[2]
         }
     } catch (e: Exception) {
         return ""
@@ -164,18 +166,18 @@ fun dateDigitToStr(digital: String): String {
 fun flattenPhoneNumber(phone: String): String {
     try {
         var ans = ""
-        var fl = false
-        var fl1 = false
+        var flagLeft = false
+        var flagDigit = false
         var cnt = 0
         for (i in 0 until phone.length) {
             if (i == 0 && phone[i] == '+') ans = "+"
             else if (phone[i].toInt() - 48 in 0..9) {
                 ans += phone[i]
-                fl1 = fl
-            } else if ((phone[i] == '(' && fl) || (phone[i] == ')' && !fl) || (phone[i] == ')' && fl && !fl1)) return ""
+                flagDigit = flagLeft
+            } else if ((phone[i] == '(' && flagLeft) || (phone[i] == ')' && !flagLeft) || (phone[i] == ')' && flagLeft && !flagDigit)) return ""
             else if (phone[i] == '(' || phone[i] == ')') {
                 cnt++
-                fl = !fl
+                flagLeft = !flagLeft
             } else if (phone[i] != '-' && phone[i] != ' ') return ""
         }
         return if (cnt != 0 && cnt != 2) ""
@@ -195,7 +197,20 @@ fun flattenPhoneNumber(phone: String): String {
  * Прочитать строку и вернуть максимальное присутствующее в ней число (717 в примере).
  * При нарушении формата входной строки или при отсутствии в ней чисел, вернуть -1.
  */
-fun bestLongJump(jumps: String): Int = TODO()
+fun bestLongJump(jumps: String): Int {
+    try {
+        val jumps1 = jumps.split(" ")
+        for (str in jumps1) {
+            if ('%' in str && '-' in str) return -1
+        }
+
+        val data = jumps.split(" ", "%", "-").filter { it != "" }.map { it.toInt() }
+        if (data.isEmpty()) return -1
+        return data.max()!!
+    } catch (e: Exception) {
+        return -1
+    }
+}
 
 /**
  * Сложная
@@ -208,7 +223,28 @@ fun bestLongJump(jumps: String): Int = TODO()
  * При нарушении формата входной строки, а также в случае отсутствия удачных попыток,
  * вернуть -1.
  */
-fun bestHighJump(jumps: String): Int = TODO()
+fun bestHighJump(jumps: String): Int {
+    try {
+        val data = jumps.split(" ")
+        var ans = -1
+        if (data.size % 2 == 1) {
+            return -1
+        }
+        for (i in 0 until data.size step 2) {
+            val curValue = data[i].toInt()
+            if (data[i + 1].count { it == '+' } + data[i + 1].count { it == '%' } + data[i + 1].count { it == '-' } != data[i + 1].length
+                || data[i + 1].isEmpty()) {
+                return -1
+            }
+            if (data[i + 1].contains('+')) {
+                ans = max(ans, curValue)
+            }
+        }
+        return ans
+    } catch (e: Exception) {
+        return -1
+    }
+}
 
 /**
  * Сложная
