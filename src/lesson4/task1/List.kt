@@ -389,7 +389,7 @@ fun getDigit(n: Int, d: Int, case: Int): String {
         } + getDigit(n % 100, 2, case)
         else -> when (n / 1000) {
             0 -> getDigit(n % 1000, 3, 0)
-            else -> getDigit(n / 1000, 3, 1) + when (n / 1000 % 10) {
+            else -> getDigit(n / 1000, 3, 1) + when (n / 1000 % if (n / 1000 % 100 in 11..15) 100 else 10) {
                 1 -> "тысяча "
                 2 -> "тысячи "
                 3 -> "тысячи "
