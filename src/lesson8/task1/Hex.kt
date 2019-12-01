@@ -2,6 +2,9 @@
 
 package lesson8.task1
 
+import java.lang.Math.abs
+import java.lang.Math.max
+
 /**
  * Точка (гекс) на шестиугольной сетке.
  * Координаты заданы как в примере (первая цифра - y, вторая цифра - x)
@@ -36,7 +39,7 @@ data class HexPoint(val x: Int, val y: Int) {
      * Расстояние вычисляется как число единичных отрезков в пути между двумя гексами.
      * Например, путь межу гексами 16 и 41 (см. выше) может проходить через 25, 34, 43 и 42 и имеет длину 5.
      */
-    fun distance(other: HexPoint): Int = TODO()
+    fun distance(other: HexPoint): Int = max(abs(x - other.x), abs(y - other.y))
 
     override fun toString(): String = "$y.$x"
 }
@@ -59,14 +62,14 @@ data class Hexagon(val center: HexPoint, val radius: Int) {
      * и другим шестиугольником B с центром в 26 и радиуоом 2 равно 2
      * (расстояние между точками 32 и 24)
      */
-    fun distance(other: Hexagon): Int = TODO()
+    fun distance(other: Hexagon): Int = max(0, center.distance(other.center) - (radius + other.radius))
 
     /**
      * Тривиальная
      *
      * Вернуть true, если заданная точка находится внутри или на границе шестиугольника
      */
-    fun contains(point: HexPoint): Boolean = TODO()
+    fun contains(point: HexPoint): Boolean = distance(Hexagon(point, 1)) == 0
 }
 
 /**
@@ -81,7 +84,7 @@ class HexSegment(val begin: HexPoint, val end: HexPoint) {
      * Такими являются, например, отрезок 30-34 (горизонталь), 13-63 (прямая диагональ) или 51-24 (косая диагональ).
      * А, например, 13-26 не является "правильным" отрезком.
      */
-    fun isValid(): Boolean = TODO()
+    fun isValid(): Boolean = (begin.x == end.x) || (begin.y == end.y) || (abs(begin.x - end.x) == abs(begin.y - end.y))
 
     /**
      * Средняя
