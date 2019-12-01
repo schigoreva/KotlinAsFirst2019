@@ -329,11 +329,8 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
     val used = mutableListOf(false, false, false);
     val out = File(outputName).bufferedWriter()
     out.write(buildString {
-        append("<html><body>")
-        var isNewParagraph = true;
-        var cntLine = 0
-        for (line in File(inputName).readLines()) cntLine++
-        if (cntLine == 1 && File(inputName).readLines()[0] == "") append("<p></p>")
+        append("<html><body><p>")
+        var isNewParagraph = false
         for (line in File(inputName).readLines()) {
             var i = 0
             if (line.isEmpty()) {
@@ -371,10 +368,7 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
             }
             append('\n')
         }
-        if (!isNewParagraph) {
-            append("</p>")
-        }
-        append("</body></html>")
+        append("</p></body></html>")
     })
     out.close()
 }
