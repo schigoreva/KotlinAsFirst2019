@@ -333,13 +333,14 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
     out.write(buildString {
         append("<html><body><p>")
         var isNewParagraph = false
+        var isFirstLine = true
         for (line in File(inputName).readLines()) {
             var i = 0
             if (line.isEmpty()) {
-                if (!isNewParagraph) {
+                if (!isNewParagraph && !isFirstLine) {
                     append("</p>")
+                    isNewParagraph = true
                 }
-                isNewParagraph = true
                 continue
             }
             if (isNewParagraph) {
@@ -347,6 +348,7 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
                 isNewParagraph = false
             }
             while (i < line.length) {
+                isFirstLine = false
                 var flag = false
                 for (j in 0 until mdMarkers.size) {
                     if (line.startsWith(mdMarkers[j], i)) {
