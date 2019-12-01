@@ -14,7 +14,7 @@ fun ang(angle: Double): Double {
     if (angle < 0) {
         return angle + 2 * PI
     }
-    return angle
+    return angle % PI
 }
 
 data class Point(val x: Double, val y: Double) {
@@ -160,11 +160,11 @@ class Line(val b: Double, val angle: Double) {
      */
     fun crossPoint(other: Line): Point {
         return if (angle * 2 == PI) {
-            val x1 = (b * cos(other.angle) - other.b * cos(angle)) / sin(ang(other.angle - angle))
+            val x1 = (b * cos(other.angle) - other.b * cos(angle)) / sin(other.angle - angle)
             val y1 = (x1 * sin(other.angle) + other.b) / cos(other.angle)
             Point(x1, y1)
         } else {
-            val x1 = (other.b * cos(angle) - b * cos(other.angle)) / sin(ang(angle - other.angle))
+            val x1 = (other.b * cos(angle) - b * cos(other.angle)) / sin(angle - other.angle)
             val y1 = (x1 * sin(angle) + b) / cos(angle)
             Point(x1, y1)
         }
@@ -189,7 +189,7 @@ class Line(val b: Double, val angle: Double) {
 fun lineBySegment(s: Segment): Line {
     val angle = atan2((s.end.y - s.begin.y), (s.end.x - s.begin.x))
     val b = s.begin.y * cos(angle) - s.begin.x * sin(angle)
-    return Line(b, angle)
+    return Line(b, ang(angle))
 }
 
 /**
@@ -277,6 +277,9 @@ fun minContainingCircle(vararg points: Point): Circle {
                 val yA = i.y
                 val yB = j.y
                 val yC = z.y
+                if ((xA * (yB - yC) + xB * (yC - yA) + xC * (yA - yB)) == 0.0) {
+                    continue
+                }
                 val myCenter = Point(
                     -0.5 * ((yA * (xB * xB + yB * yB - xC * xC - yC * yC) +
                             yB * (xC * xC + yC * yC - xA * xA - yA * yA) +

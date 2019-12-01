@@ -2,6 +2,7 @@
 
 package lesson6.task1
 
+import java.lang.IllegalStateException
 import kotlin.math.max
 
 /**
@@ -346,8 +347,13 @@ fun mostExpensive(description: String): String {
  * Вернуть -1, если roman не является корректным римским числом
  */
 fun fromRoman(roman: String): Int {
-    val dec = mapOf<Char, Int>('M' to 1000, 'D' to 500, 'C' to 100,
-        'L' to 50, 'X' to 10, 'V' to 5, 'I' to 1)
+    if (roman.isEmpty()) {
+        return -1
+    }
+    val dec = mapOf(
+        'M' to 1000, 'D' to 500, 'C' to 100,
+        'L' to 50, 'X' to 10, 'V' to 5, 'I' to 1
+    )
     var res = 0
     for (i in 0 until roman.length - 1) {
         if (!dec.containsKey(roman[i])) {
@@ -403,5 +409,65 @@ fun fromRoman(roman: String): Int {
  *
  */
 fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
-    TODO()
+    val mem = mutableListOf<Int>()
+    var n = cells
+    for (i in 0 until n) {
+        mem.add(0)
+    }
+    mem.fill(0)
+    var bal = 0
+    for (i in commands) {
+        if (i != '+' && i != '-' && i != '>' && i != '<' && i != '[' && i != ']' && i != ' ') {
+            throw java.lang.IllegalArgumentException()
+        }
+        if (i == '[') {
+            bal++
+        } else if (i == ']') {
+            bal--
+        }
+        if (bal < 0) {
+            throw java.lang.IllegalArgumentException()
+        }
+    }
+    if (bal != 0) {
+        throw java.lang.IllegalArgumentException()
+    }
+    var pos = n / 2
+    var cnt = 0
+    var i = 0
+    while (i < commands.length && cnt < limit) {
+        cnt++
+        if (commands[i] == '+') {
+            mem[pos]++
+        } else if (commands[i] == '-') {
+            mem[pos]--
+        } else if (commands[i] == '>') {
+            pos++
+        } else if (commands[i] == '<') {
+            pos--
+        } else if (commands[i] == '[') {
+            if (mem[pos] == 0) {
+                var balance = 1
+                while (balance != 0) {
+                    i++
+                    if (commands[i] == '[') balance++
+                    else if (commands[i] == ']') balance--
+                }
+            }
+        } else if (commands[i] == ']') {
+            if (mem[pos] != 0) {
+                var balance = -1
+                while (balance != 0) {
+                    i--
+                    if (commands[i] == '[') balance++
+                    else if (commands[i] == ']') balance--
+                }
+            }
+        }
+        i++
+        if (pos < 0 || pos >= n) {
+            throw IllegalStateException()
+        }
+    }
+    return mem
 }
