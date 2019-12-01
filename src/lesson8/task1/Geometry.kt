@@ -11,10 +11,15 @@ import kotlin.math.*
  */
 
 fun ang(angle: Double): Double {
+    var a = angle
     if (angle < 0) {
-        return angle + 2 * PI
+        a += 2 * PI
     }
-    return angle % PI
+    return if (a < PI) {
+        a
+    } else {
+        PI - (a - PI)
+    }
 }
 
 data class Point(val x: Double, val y: Double) {
@@ -188,7 +193,7 @@ class Line(val b: Double, val angle: Double) {
  */
 fun lineBySegment(s: Segment): Line {
     val angle = atan2((s.end.y - s.begin.y), (s.end.x - s.begin.x))
-    val b = s.begin.y * cos(angle) - s.begin.x * sin(angle)
+    val b = abs(s.begin.y * cos(angle) - s.begin.x * sin(angle))
     return Line(b, ang(angle))
 }
 
@@ -227,7 +232,29 @@ fun findNearestCirclePair(vararg circles: Circle): Pair<Circle, Circle> = TODO()
  * (построить окружность по трём точкам, или
  * построить окружность, описанную вокруг треугольника - эквивалентная задача).
  */
-fun circleByThreePoints(a: Point, b: Point, c: Point): Circle = TODO()
+fun circleByThreePoints(a: Point, b: Point, c: Point): Circle {
+    val xA = a.x
+    val xB = b.x
+    val xC = c.x
+    val yA = a.y
+    val yB = b.y
+    val yC = c.y
+    if ((xA * (yB - yC) + xB * (yC - yA) + xC * (yA - yB)) == 0.0) {
+        return Circle(a, 0.0)
+    }
+    val myCenter = Point(
+        -0.5 * ((yA * (xB * xB + yB * yB - xC * xC - yC * yC) +
+                yB * (xC * xC + yC * yC - xA * xA - yA * yA) +
+                yC * (xA * xA + yA * yA - xB * xB - yB * yB)) /
+                (xA * (yB - yC) + xB * (yC - yA) + xC * (yA - yB))),
+        0.5 * ((xA * (xB * xB + yB * yB - xC * xC - yC * yC) +
+                xB * (xC * xC + yC * yC - xA * xA - yA * yA) +
+                xC * (xA * xA + yA * yA - xB * xB - yB * yB)) /
+                (xA * (yB - yC) + xB * (yC - yA) + xC * (yA - yB)))
+    )
+    val myRadius = (a.distance(myCenter) + b.distance(myCenter) + c.distance(myCenter)) / 3
+    return Circle(myCenter, myRadius)
+}
 
 /**
  * Очень сложная
@@ -257,7 +284,7 @@ fun minContainingCircle(vararg points: Point): Circle {
     }
     var flag = true
     for (i in points) {
-        if (abs(i.distance(center) - rad) > 1e-9) {
+        if (rad + 1e-9 < i.distance(center)) {
             flag = false
             break
         }
@@ -271,37 +298,18 @@ fun minContainingCircle(vararg points: Point): Circle {
             if (i == j) continue
             for (z in points) {
                 if (i == z || j == z) continue
-                val xA = i.x
-                val xB = j.x
-                val xC = z.x
-                val yA = i.y
-                val yB = j.y
-                val yC = z.y
-                if ((xA * (yB - yC) + xB * (yC - yA) + xC * (yA - yB)) == 0.0) {
-                    continue
-                }
-                val myCenter = Point(
-                    -0.5 * ((yA * (xB * xB + yB * yB - xC * xC - yC * yC) +
-                            yB * (xC * xC + yC * yC - xA * xA - yA * yA) +
-                            yC * (xA * xA + yA * yA - xB * xB - yB * yB)) /
-                            (xA * (yB - yC) + xB * (yC - yA) + xC * (yA - yB))),
-                    0.5 * ((xA * (xB * xB + yB * yB - xC * xC - yC * yC) +
-                            xB * (xC * xC + yC * yC - xA * xA - yA * yA) +
-                            xC * (xA * xA + yA * yA - xB * xB - yB * yB)) /
-                            (xA * (yB - yC) + xB * (yC - yA) + xC * (yA - yB)))
-                )
-                val myRadius = i.distance(myCenter)
+                val c = circleByThreePoints(i, j, z)
                 var fl = true
                 for (t in points) {
-                    if (abs(t.distance(myCenter) - myRadius) > 1e-9) {
+                    if (c.radius + 1e-18 < t.distance(c.center)) {
                         fl = false
                         break
                     }
                 }
                 if (fl) {
-                    if (myRadius < rad || first) {
-                        rad = myRadius
-                        center = myCenter
+                    if (c.radius < rad || first) {
+                        rad = c.radius
+                        center = c.center
                         first = false
                     }
                 }
