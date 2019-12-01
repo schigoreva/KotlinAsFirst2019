@@ -3,6 +3,7 @@
 package lesson8.task1
 
 import lesson1.task1.sqr
+import lesson5.task1.canBuildFrom
 import kotlin.math.*
 
 /**
@@ -158,7 +159,7 @@ class Line(val b: Double, val angle: Double) {
      * Для этого необходимо составить и решить систему из двух уравнений (каждое для своей прямой)
      */
     fun crossPoint(other: Line): Point {
-        return if (abs(angle * 2 - PI) < 1e-5) {
+        return if (angle * 2 == PI) {
             val x1 = (b * cos(other.angle) - other.b * cos(angle)) / sin(ang(other.angle - angle))
             val y1 = (x1 * sin(other.angle) + other.b) / cos(other.angle)
             Point(x1, y1)
@@ -186,7 +187,7 @@ class Line(val b: Double, val angle: Double) {
  * Построить прямую по отрезку
  */
 fun lineBySegment(s: Segment): Line {
-    val angle = if (abs(s.end.x - s.begin.x) > 1e-5) {
+    val angle = if (s.end.x == s.begin.x) {
         atan(ang((s.end.y - s.begin.y) / (s.end.x - s.begin.x)))
     } else {
         PI / 2
@@ -243,5 +244,70 @@ fun circleByThreePoints(a: Point, b: Point, c: Point): Circle = TODO()
  * три точки данного множества, либо иметь своим диаметром отрезок,
  * соединяющий две самые удалённые точки в данном множестве.
  */
-fun minContainingCircle(vararg points: Point): Circle = TODO()
+fun minContainingCircle(vararg points: Point): Circle {
+    if (points.isEmpty()) {
+        throw java.lang.IllegalArgumentException()
+    }
+    var center = points[0]
+    var rad = 0.0
+    for (i in points) {
+        for (j in points) {
+            val dist = i.distance(j)
+            if (dist > rad) {
+                rad = dist / 2
+                center = Point((i.x + j.x) / 2, (i.y + j.y) / 2)
+            }
+        }
+    }
+    var flag = true
+    for (i in points) {
+        if (i.distance(center) > rad) {
+            flag = false
+            break
+        }
+    }
+    if (flag) {
+        return Circle(center, rad)
+    }
+    rad = 1e9
+    for (i in points) {
+        for (j in points) {
+            if (i == j) continue
+            for (z in points) {
+                if (i == z || j == z) continue
+                val xA = i.x
+                val xB = j.x
+                val xC = z.x
+                val yA = i.y
+                val yB = j.y
+                val yC = z.y
+                val myCenter = Point(
+                    -0.5 * ((yA * (xB * xB + yB * yB - xC * xC - yC * yC) +
+                            yB * (xC * xC + yC * yC - xA * xA - yA * yA) +
+                            yC * (xA * xA + yA * yA - xB * xB - yB * yB)) /
+                            (xA * (yB - yC) + xB * (yC - yA) + xC * (yA - yB))),
+                    0.5 * ((xA * (xB * xB + yB * yB - xC * xC - yC * yC) +
+                            xB * (xC * xC + yC * yC - xA * xA - yA * yA) +
+                            xC * (xA * xA + yA * yA - xB * xB - yB * yB)) /
+                            (xA * (yB - yC) + xB * (yC - yA) + xC * (yA - yB)))
+                )
+                val myRadius = i.distance(myCenter)
+                var fl = true
+                for (t in points) {
+                    if (t.distance(myCenter) > myRadius) {
+                        fl = false
+                        break
+                    }
+                }
+                if (fl) {
+                    if (myRadius < rad) {
+                        rad = myRadius
+                        center = myCenter
+                    }
+                }
+            }
+        }
+    }
+    return Circle(center, rad)
+}
 
