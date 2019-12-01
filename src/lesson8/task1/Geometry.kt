@@ -189,7 +189,7 @@ class Line(val b: Double, val angle: Double) {
  */
 fun lineBySegment(s: Segment): Line {
     val angle = atan2((s.end.y - s.begin.y), (s.end.x - s.begin.x))
-    val b = abs(s.begin.y * cos(angle) - s.begin.x * sin(angle))
+    val b = s.end.y * cos(angle) - s.end.x * sin(angle)
     return Line(b, ang(angle))
 }
 
