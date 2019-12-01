@@ -150,7 +150,7 @@ class Line(val b: Double, val angle: Double) {
      * Для этого необходимо составить и решить систему из двух уравнений (каждое для своей прямой)
      */
     fun crossPoint(other: Line): Point {
-        return if (abs(angle * 2 - PI) < 1e-9) {
+        return if (abs(angle * 2 - PI) < 1e-17) {
             val x1 = (b * cos(other.angle) - other.b * cos(angle)) / sin(other.angle - angle)
             val y1 = (x1 * sin(other.angle) + other.b) / cos(other.angle)
             Point(x1, y1)
@@ -178,7 +178,7 @@ class Line(val b: Double, val angle: Double) {
  * Построить прямую по отрезку
  */
 fun lineBySegment(s: Segment): Line {
-    val angle = if (abs(s.end.x - s.begin.x) > 1e-9) {
+    val angle = if (abs(s.end.x - s.begin.x) > 1e-17) {
         atan((s.end.y - s.begin.y) / (s.end.x - s.begin.x))
     } else {
         PI / 2
