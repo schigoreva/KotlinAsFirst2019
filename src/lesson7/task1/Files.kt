@@ -147,17 +147,19 @@ fun alignFileByWidth(inputName: String, outputName: String) {
     val lines = mutableListOf<String>()
     var maxLen = 0
     for (line in File(inputName).readLines()) {
+        var flag = false
         lines.add(buildString {
-            var isSpace = true
+            var isSpace = false
             for (c in line) {
                 if (c == ' ') {
-                    if (!isSpace) {
-                        append(c)
-                        isSpace = true
-                    }
+                    isSpace = flag
                 } else {
+                    if (isSpace) {
+                        append(' ')
+                    }
                     append(c)
                     isSpace = false
+                    flag = true
                 }
             }
         })
