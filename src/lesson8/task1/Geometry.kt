@@ -297,7 +297,7 @@ fun minContainingCircle(vararg points: Point): Circle {
                 val c = circleByThreePoints(i, j, z)
                 var fl = true
                 for (t in points) {
-                    if (c.radius + 1e-18 < t.distance(c.center)) {
+                    if (c.radius + 1e-25 < t.distance(c.center)) {
                         fl = false
                         break
                     }
