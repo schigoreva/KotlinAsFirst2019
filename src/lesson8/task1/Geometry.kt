@@ -136,7 +136,7 @@ fun circleByDiameter(diameter: Segment): Circle {
  * или: y * cos(angle) = x * sin(angle) + b, где b = point.y * cos(angle) - point.x * sin(angle).
  * Угол наклона обязан находиться в диапазоне от 0 (включительно) до PI (исключительно).
  */
-class Line private constructor(val b: Double, val angle: Double) {
+class Line(val b: Double, val angle: Double) {
     init {
         require(angle >= 0 && angle < PI) { "Incorrect line angle: $angle" }
     }
@@ -149,7 +149,9 @@ class Line private constructor(val b: Double, val angle: Double) {
      * Найти точку пересечения с другой линией.
      * Для этого необходимо составить и решить систему из двух уравнений (каждое для своей прямой)
      */
-    fun crossPoint(other: Line): Point = TODO()
+    fun crossPoint(other: Line): Point {
+        TODO()
+    }
 
     override fun equals(other: Any?) = other is Line && angle == other.angle && b == other.b
 
@@ -167,14 +169,18 @@ class Line private constructor(val b: Double, val angle: Double) {
  *
  * Построить прямую по отрезку
  */
-fun lineBySegment(s: Segment): Line = TODO()
+fun lineBySegment(s: Segment): Line {
+    val angle = atan((s.end.y - s.begin.y) / (s.end.x - s.begin.x))
+    val b = s.end.y * cos(angle) - s.end.x * sin(angle)
+    return Line(b, angle)
+}
 
 /**
  * Средняя
  *
  * Построить прямую по двум точкам
  */
-fun lineByPoints(a: Point, b: Point): Line = TODO()
+fun lineByPoints(a: Point, b: Point): Line = lineBySegment(Segment(a, b))
 
 /**
  * Сложная
