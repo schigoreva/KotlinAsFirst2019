@@ -278,7 +278,7 @@ fun extractRepeats(list: List<String>): Map<String, Int> {
  */
 fun hasAnagrams(words: List<String>): Boolean {
     val cnt = mutableListOf<Map<Char, Int>>()
-    for (word in words) {
+    for (word in words.filter { it != "" }) {
         val st = mutableMapOf<Char, Int>()
         for (c in word) {
             st[c] = st.getOrDefault(c, 0) + 1
@@ -455,7 +455,7 @@ fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<Strin
         } else {
             if (dp[cur][w] != dp[cur - 1][w]) {
                 ans.add(i)
-                w -= treasures.getOrDefault(i, Pair(0, 0)).second
+                w -= treasures.getOrDefault(i, Pair(0, 0)).first
             }
         }
         cur--

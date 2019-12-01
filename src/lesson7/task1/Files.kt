@@ -331,6 +331,9 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
     out.write(buildString {
         append("<html><body>")
         var isNewParagraph = true;
+        var cntLine = 0
+        for (line in File(inputName).readLines()) cntLine++
+        if (cntLine == 1 && File(inputName).readLines()[0] == "") append("<p></p>")
         for (line in File(inputName).readLines()) {
             var i = 0
             if (line.isEmpty()) {

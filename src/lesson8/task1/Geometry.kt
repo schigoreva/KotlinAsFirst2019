@@ -150,8 +150,8 @@ class Line(val b: Double, val angle: Double) {
      * Для этого необходимо составить и решить систему из двух уравнений (каждое для своей прямой)
      */
     fun crossPoint(other: Line): Point {
-        val x1 = (b * cos(other.angle) + other.b * cos(angle)) / sin(angle - other.angle)
-        val y1 = (x1 * sin(angle) - b) / cos(angle)
+        val x1 = (other.b * cos(angle) - b * cos(other.angle)) / sin(angle - other.angle)
+        val y1 = (x1 * sin(angle) + b) / cos(angle)
         println(x1)
         println(y1)
         return Point(x1, y1)
