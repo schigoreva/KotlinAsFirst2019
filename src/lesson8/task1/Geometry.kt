@@ -239,13 +239,14 @@ fun circleByThreePoints(a: Point, b: Point, c: Point): Circle {
         return Circle(a, 0.0)
     }
     val l = (xA * (yB - yC) + xB * (yC - yA) + xC * (yA - yB)) * 2
+    val n = Point(0.0, 0.0)
     val myCenter = Point(
-        ((yA * (xB.pow(2) + yB.pow(2) - xC.pow(2) - yC.pow(2)) +
-                yB * (xC.pow(2) + yC.pow(2) - xA.pow(2) - yA.pow(2)) +
-                yC * (xA.pow(2) + yA.pow(2) - xB.pow(2) - yB.pow(2))) / -l),
-        ((xA * (xB.pow(2) + yB.pow(2) - xC.pow(2) - yC.pow(2)) +
-                xB * (xC.pow(2) + yC.pow(2) - xA.pow(2) - yA.pow(2)) +
-                xC * (xA.pow(2) + yA.pow(2) - xB.pow(2) - yB.pow(2))) / l)
+        ((yA * (b.distance(n).pow(2) - c.distance(n).pow(2)) +
+                yB * (c.distance(n).pow(2) - a.distance(n).pow(2)) +
+                yC * (a.distance(n).pow(2) - b.distance(n).pow(2))) / -l),
+        ((xA * (b.distance(n).pow(2) - c.distance(n).pow(2)) +
+                xB * (c.distance(n).pow(2) - a.distance(n).pow(2)) +
+                xC * (a.distance(n).pow(2) - b.distance(n).pow(2))) / l)
     )
     val myRadius = (a.distance(myCenter) + b.distance(myCenter) + c.distance(myCenter)) / 3
     return Circle(myCenter, myRadius)
@@ -279,7 +280,7 @@ fun minContainingCircle(vararg points: Point): Circle {
     }
     var flag = true
     for (i in points) {
-        if (rad + 1e-9 < i.distance(center)) {
+        if (rad + 1e-18 < i.distance(center)) {
             flag = false
             break
         }
