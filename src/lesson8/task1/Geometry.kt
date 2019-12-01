@@ -279,7 +279,7 @@ fun minContainingCircle(vararg points: Point): Circle {
     }
     var flag = true
     for (i in points) {
-        if (rad + 1e-25 < i.distance(center)) {
+        if (rad + 1e-30 < i.distance(center)) {
             flag = false
             break
         }
