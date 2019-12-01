@@ -166,6 +166,7 @@ fun dateDigitToStr(digital: String): String {
  */
 fun flattenPhoneNumber(phone: String): String {
     try {
+        if (phone == "+") return ""
         var ans = ""
         var flagLeft = false
         var flagDigit = false
