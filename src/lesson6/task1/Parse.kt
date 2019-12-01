@@ -345,7 +345,26 @@ fun mostExpensive(description: String): String {
  *
  * Вернуть -1, если roman не является корректным римским числом
  */
-fun fromRoman(roman: String): Int = TODO()
+fun fromRoman(roman: String): Int {
+    val dec = mapOf<Char, Int>('M' to 1000, 'D' to 500, 'C' to 100,
+        'L' to 50, 'X' to 10, 'V' to 5, 'I' to 1)
+    var res = 0
+    for (i in 0 until roman.length - 1) {
+        if (!dec.containsKey(roman[i])) {
+            return -1;
+        }
+        if (dec.getOrDefault(roman[i], 0) < dec.getOrDefault(roman[i + 1], 0)) {
+            res -= dec.getOrDefault(roman[i], 0)
+        } else {
+            res += dec.getOrDefault(roman[i], 0)
+        }
+    }
+    if (!dec.containsKey(roman[roman.length - 1])) {
+        return -1;
+    }
+    res += dec.getOrDefault(roman[roman.length - 1], 0)
+    return res
+}
 
 /**
  * Очень сложная
@@ -383,4 +402,6 @@ fun fromRoman(roman: String): Int = TODO()
  * IllegalArgumentException должен бросаться даже если ошибочная команда не была достигнута в ходе выполнения.
  *
  */
-fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> = TODO()
+fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
+    TODO()
+}

@@ -187,12 +187,8 @@ class Line(val b: Double, val angle: Double) {
  * Построить прямую по отрезку
  */
 fun lineBySegment(s: Segment): Line {
-    val angle = if (s.end.x == s.begin.x) {
-        atan(ang((s.end.y - s.begin.y) / (s.end.x - s.begin.x)))
-    } else {
-        PI / 2
-    }
-    val b = s.end.y * cos(angle) - s.end.x * sin(angle)
+    val angle = atan2((s.end.y - s.begin.y), (s.end.x - s.begin.x))
+    val b = s.begin.y * cos(angle) - s.begin.x * sin(angle)
     return Line(b, angle)
 }
 
@@ -261,7 +257,7 @@ fun minContainingCircle(vararg points: Point): Circle {
     }
     var flag = true
     for (i in points) {
-        if (i.distance(center) > rad) {
+        if (abs(i.distance(center) - rad) > 1e-9) {
             flag = false
             break
         }
@@ -269,7 +265,7 @@ fun minContainingCircle(vararg points: Point): Circle {
     if (flag) {
         return Circle(center, rad)
     }
-    rad = 1e9
+    var first = true
     for (i in points) {
         for (j in points) {
             if (i == j) continue
@@ -294,15 +290,16 @@ fun minContainingCircle(vararg points: Point): Circle {
                 val myRadius = i.distance(myCenter)
                 var fl = true
                 for (t in points) {
-                    if (t.distance(myCenter) > myRadius) {
+                    if (abs(t.distance(myCenter) - myRadius) > 1e-9) {
                         fl = false
                         break
                     }
                 }
                 if (fl) {
-                    if (myRadius < rad) {
+                    if (myRadius < rad || first) {
                         rad = myRadius
                         center = myCenter
+                        first = false
                     }
                 }
             }
