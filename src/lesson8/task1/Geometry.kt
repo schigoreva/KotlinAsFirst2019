@@ -15,11 +15,7 @@ fun ang(angle: Double): Double {
     if (angle < 0) {
         a += 2 * PI
     }
-    return if (a < PI) {
-        a
-    } else {
-        PI - (a - PI)
-    }
+    return a % PI
 }
 
 data class Point(val x: Double, val y: Double) {
@@ -243,14 +239,14 @@ fun circleByThreePoints(a: Point, b: Point, c: Point): Circle {
         return Circle(a, 0.0)
     }
     val myCenter = Point(
-        -0.5 * ((yA * (xB * xB + yB * yB - xC * xC - yC * yC) +
+        ((yA * (xB * xB + yB * yB - xC * xC - yC * yC) +
                 yB * (xC * xC + yC * yC - xA * xA - yA * yA) +
                 yC * (xA * xA + yA * yA - xB * xB - yB * yB)) /
-                (xA * (yB - yC) + xB * (yC - yA) + xC * (yA - yB))),
-        0.5 * ((xA * (xB * xB + yB * yB - xC * xC - yC * yC) +
+                (xA * (yB - yC) + xB * (yC - yA) + xC * (yA - yB))) / -2,
+        ((xA * (xB * xB + yB * yB - xC * xC - yC * yC) +
                 xB * (xC * xC + yC * yC - xA * xA - yA * yA) +
                 xC * (xA * xA + yA * yA - xB * xB - yB * yB)) /
-                (xA * (yB - yC) + xB * (yC - yA) + xC * (yA - yB)))
+                (xA * (yB - yC) + xB * (yC - yA) + xC * (yA - yB))) / 2
     )
     val myRadius = (a.distance(myCenter) + b.distance(myCenter) + c.distance(myCenter)) / 3
     return Circle(myCenter, myRadius)
