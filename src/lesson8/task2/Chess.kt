@@ -42,9 +42,7 @@ data class Square(val column: Int, val row: Int) {
  * Если нотация некорректна, бросить IllegalArgumentException
  */
 fun square(notation: String): Square {
-    if (notation == "") {
-        throw IllegalArgumentException()
-    }
+    require(notation.length == 2 && notation[1].toString().toIntOrNull() != null)
     if (Square(notation[0] - 'a' + 1, notation[1].toString().toInt()).notation() == notation) {
         return Square(notation[0] - 'a' + 1, notation[1].toString().toInt())
     } else {
