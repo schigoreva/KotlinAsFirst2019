@@ -186,14 +186,16 @@ fun collatzSteps(x: Int): Int = when {
  * Использовать kotlin.math.sin и другие стандартные реализации функции синуса в этой задаче запрещается.
  */
 
-fun prt(k: Double, eps: Double, x1: Double, ans: Double, n: Int, nk: Int): Double {
+fun prt(k: Double, eps: Double, x1: Double, ans: Double, n: Int): Double {
     var ans1 = ans
     var n1 = n
     var k1 = k
+    var nk = false
     while (abs(k1) >= eps) {
-        ans1 += if (n1 % 4 == nk) k1 else -k1
+        ans1 += if (nk) k1 else -k1
         n1 += 2
         k1 *= x1.pow(2) / ((n1 - 1) * n1)
+        nk = !nk
     }
     return ans1
 }
@@ -202,7 +204,7 @@ fun sin(x: Double, eps: Double): Double {
     val x1 = x % (2 * PI)
     val k = x1.pow(3) / (2 * 3)
     val n = 3
-    return prt(k, eps, x1, x1, n, 1)
+    return prt(k, eps, x1, x1, n)
 }
 
 /**
@@ -219,7 +221,7 @@ fun cos(x: Double, eps: Double): Double {
     val ans = 1.0
     val k = x1.pow(2) / 2
     val n = 2
-    return prt(k, eps, x1, ans, n, 0)
+    return prt(k, eps, x1, ans, n)
 }
 
 /**

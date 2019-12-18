@@ -2,6 +2,7 @@
 
 package lesson6.task1
 
+import lesson2.task2.daysInMonth
 import java.lang.IllegalStateException
 import kotlin.math.max
 
@@ -72,40 +73,40 @@ fun main() {
  * Обратите внимание: некорректная с точки зрения календаря дата (например, 30.02.2009) считается неверными
  * входными данными.
  */
+
+fun isNull(list: List<Any?>): Boolean {
+    val list2 = list.filterNotNull()
+    return list.size != list2.size
+}
+
 fun dateStrToDigit(str: String): String {
-    try {
-        val data = str.split(" ")
-        val day = data[0].toInt()
-        val year = data[2].toInt()
-        val monthStr = when (data[1]) {
-            "января" -> "1"
-            "февраля" -> "2"
-            "марта" -> "3"
-            "апреля" -> "4"
-            "мая" -> "5"
-            "июня" -> "6"
-            "июля" -> "7"
-            "августа" -> "8"
-            "сентября" -> "9"
-            "октября" -> "10"
-            "ноября" -> "11"
-            "декабря" -> "12"
-            else -> "A"
-        }
-        val monthDigit = monthStr.toInt()
-        return when {
-            day > 29 && monthDigit == 2 && (year % 400 == 0 || (year % 4 == 0 && year % 100 != 0)) -> ""
-            day > 28 && monthDigit == 2 && !(year % 400 == 0 || (year % 4 == 0 && year % 100 != 0)) -> ""
-            day > 30 && (monthDigit == 4 || monthDigit == 6 || monthDigit == 9 || monthDigit == 11) -> ""
-            day > 31 -> ""
-            monthDigit > 12 -> ""
-            else -> String.format("%02d.%02d.%d", day, monthDigit, year)
-        }
-    } catch (e: Exception) {
+    val date = str.split(" ")
+    if (date.size != 3) {
         return ""
     }
-
+    val day = date[0].toIntOrNull()
+    val year = date[2].toIntOrNull()
+    val monthStr = mapOf(
+        "января" to 1,
+        "февраля" to 2,
+        "марта" to 3,
+        "апреля" to 4,
+        "мая" to 5,
+        "июня" to 6,
+        "июля" to 7,
+        "августа" to 8,
+        "сентября" to 9,
+        "октября" to 10,
+        "ноября" to 11,
+        "декабря" to 12
+    )
+    return when {
+        isNull(listOf(day, year, monthStr[date[1]])) -> ""
+        day!! > daysInMonth(monthStr[date[1]]!!, year!!) -> ""
+        else -> String.format("%02d.%02d.%d", day, monthStr[date[1]], year)
+    }
 }
+
 
 /**
  * Средняя
@@ -118,38 +119,32 @@ fun dateStrToDigit(str: String): String {
  * входными данными.
  */
 fun dateDigitToStr(digital: String): String {
-    try {
-        val data = digital.split(".")
-        val day = data[0].toInt()
-        val monthDigit = data[1].toInt()
-        val year = data[2].toInt()
-        val monthStr = when (monthDigit) {
-            1 -> " января "
-            2 -> " февраля "
-            3 -> " марта "
-            4 -> " апреля "
-            5 -> " мая "
-            6 -> " июня "
-            7 -> " июля "
-            8 -> " августа "
-            9 -> " сентября "
-            10 -> " октября "
-            11 -> " ноября "
-            12 -> " декабря "
-            else -> "A"
-        }
-        return when {
-            day > 29 && monthDigit == 2 && (year % 400 == 0 || (year % 4 == 0 && year % 100 != 0)) -> ""
-            day > 28 && monthDigit == 2 && !(year % 400 == 0 || (year % 4 == 0 && year % 100 != 0)) -> ""
-            day > 30 && (monthDigit == 4 || monthDigit == 6 || monthDigit == 9 || monthDigit == 11) -> ""
-            day > 31 || monthDigit > 12 || monthStr == "A" || data.size != 3 -> ""
-            else -> day.toString() + monthStr + data[2]
-        }
-    } catch (e: Exception) {
+    val date = digital.split(".")
+    if (date.size != 3) {
         return ""
     }
+    val day = date[0].toIntOrNull()
+    val year = date[2].toIntOrNull()
+    val monthStr = listOf(
+        " января ",
+        " февраля ",
+        " марта ",
+        " апреля ",
+        " мая ",
+        " июня ",
+        " июля ",
+        " августа ",
+        " сентября ",
+        " октября ",
+        " ноября ",
+        " декабря "
+    )
+    return when {
+        isNull(listOf(day, year, date[1].toIntOrNull())) -> ""
+        day!! > daysInMonth(date[1].toInt(), year!!) -> ""
+        else -> day.toString() + monthStr[date[1].toInt() - 1] + date[2]
+    }
 }
-
 /**
  * Средняя
  *
@@ -206,9 +201,9 @@ fun bestLongJump(jumps: String): Int {
             if ('%' in str && '-' in str) return -1
         }
 
-        val data = jumps.split(" ", "%", "-").filter { it != "" }.map { it.toInt() }
-        if (data.isEmpty()) return -1
-        return data.max()!!
+        val records = jumps.split(" ", "%", "-").filter { it != "" }.map { it.toInt() }
+        if (records.isEmpty()) return -1
+        return records.max()!!
     } catch (e: Exception) {
         return -1
     }
@@ -227,18 +222,20 @@ fun bestLongJump(jumps: String): Int {
  */
 fun bestHighJump(jumps: String): Int {
     try {
-        val data = jumps.split(" ")
+        val records = jumps.split(" ")
         var ans = -1
-        if (data.size % 2 == 1) {
+        if (records.size % 2 == 1) {
             return -1
         }
-        for (i in 0 until data.size step 2) {
-            val curValue = data[i].toInt()
-            if (data[i + 1].count { it == '+' } + data[i + 1].count { it == '%' } + data[i + 1].count { it == '-' } != data[i + 1].length
-                || data[i + 1].isEmpty()) {
+        for (i in 0 until records.size step 2) {
+            val curValue = records[i].toInt()
+            if (records[i + 1].count { it == '+' }
+                + records[i + 1].count { it == '%' }
+                + records[i + 1].count { it == '-' } != records[i + 1].length
+                || records[i + 1].isEmpty()) {
                 return -1
             }
-            if (data[i + 1].contains('+')) {
+            if (records[i + 1].contains('+')) {
                 ans = max(ans, curValue)
             }
         }

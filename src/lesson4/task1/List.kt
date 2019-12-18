@@ -249,10 +249,11 @@ fun convert(n: Int, base: Int): List<Int> {
  * (например, n.toString(base) и подобные), запрещается.
  */
 fun convertToString(n: Int, base: Int): String {
-    val shift = 'W'
+    val chr = 87
+    val digit = 9
     val v = convert(n, base).map {
-        if (it > 9) {
-            (shift + it).toString()
+        if (it > digit) {
+            (chr + it).toChar().toString()
         } else {
             it.toString()
         }
@@ -283,10 +284,10 @@ fun decimal(digits: List<Int>, base: Int): Int = polynom(digits.reversed(), base
  */
 fun decimalFromString(str: String, base: Int): Int {
     val v = mutableListOf<Int>()
-    val chr = 'W'
-    val digit = '0'
+    val chr = 87
+    val noDiigit = 97
     for (i in 0 until str.length) {
-        v += if (str[i] >= 'a') str[i] - chr else str[i] - digit
+        v += if (str[i].toInt() >= noDiigit) str[i].toInt() - chr else str[i].toString().toInt()
     }
     return decimal(v.toList(), base)
 }

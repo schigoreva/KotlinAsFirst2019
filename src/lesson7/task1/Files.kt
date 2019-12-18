@@ -64,12 +64,7 @@ fun countSubstrings(inputName: String, substrings: List<String>): Map<String, In
             var cnt = 0
             for (i in 0 until str2.length - str1.length + 1) {
                 var has = 1
-                for (j in 0 until str1.length) {
-                    if (str1[j] != str2[i + j]) {
-                        has = 0
-                        break
-                    }
-                }
+                if (str1 != str2.substring(i, i + str1.length)) has = 0
                 cnt += has
             }
             ans[item] = ans.getOrDefault(item, 0) + cnt
