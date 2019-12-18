@@ -213,7 +213,8 @@ fun bishopTrajectory(start: Square, end: Square): List<Square> {
  * Пример: kingMoveNumber(Square(3, 1), Square(6, 3)) = 3.
  * Король может последовательно пройти через клетки (4, 2) и (5, 2) к клетке (6, 3).
  */
-fun kingMoveNumber(start: Square, end: Square): Int {
+
+fun myBfs(start: Square, end: Square, step: List<Pair<Int, Int>>): Int {
     require(start.inside() && end.inside())
     val chessboard = mutableListOf(
         mutableListOf(0, 0, 0, 0, 0, 0, 0, 0),
@@ -225,16 +226,14 @@ fun kingMoveNumber(start: Square, end: Square): Int {
         mutableListOf(0, 0, 0, 0, 0, 0, 0, 0),
         mutableListOf(0, 0, 0, 0, 0, 0, 0, 0)
     )
-    val dd =
-        listOf(Pair(-1, -1), Pair(-1, 1), Pair(1, -1), Pair(1, 1), Pair(0, 1), Pair(1, 0), Pair(0, -1), Pair(-1, 0))
     val que = mutableListOf(Square(start.column - 1, start.row - 1))
     chessboard[start.column - 1][start.row - 1] = 1
     while (que.isNotEmpty()) {
         val way = que[0]
         que.removeAt(0)
-        for (i in 0 until 8) {
-            val it = way.column + dd[i].first
-            val jt = way.row + dd[i].second
+        for (i in 0 until step.size) {
+            val it = way.column + step[i].first
+            val jt = way.row + step[i].second
             if (Square(it + 1, jt + 1).inside()) {
                 if (chessboard[it][jt] == 0) {
                     chessboard[it][jt] = chessboard[way.column][way.row] + 1
@@ -244,6 +243,12 @@ fun kingMoveNumber(start: Square, end: Square): Int {
         }
     }
     return chessboard[end.column - 1][end.row - 1] - 1
+}
+
+fun kingMoveNumber(start: Square, end: Square): Int {
+    val step =
+        listOf(Pair(-1, -1), Pair(-1, 1), Pair(1, -1), Pair(1, 1), Pair(0, 1), Pair(1, 0), Pair(0, -1), Pair(-1, 0))
+    return myBfs(start, end, step)
 }
 
 /**
@@ -287,7 +292,11 @@ fun kingTrajectory(start: Square, end: Square): List<Square> = TODO()
  */
 
 
-fun knightMoveNumber(start: Square, end: Square): Int = TODO()
+fun knightMoveNumber(start: Square, end: Square): Int {
+    val step =
+        listOf(Pair(1, 2), Pair(2, 1), Pair(-1, -2), Pair(-2, -1), Pair(-1, 2), Pair(1, -2), Pair(-2, 1), Pair(2, -1))
+    return myBfs(start, end, step)
+}
 
 /**
  * Очень сложная

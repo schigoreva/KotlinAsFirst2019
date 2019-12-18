@@ -353,6 +353,9 @@ fun fromRoman(roman: String): Int {
     )
     var res = 0
     for (i in 0 until roman.length - 1) {
+        if (!dec.containsKey(roman[i])) {
+            return -1;
+        }
         if (dec.getOrDefault(roman[i], 0) < dec.getOrDefault(roman[i + 1], 0)) {
             res -= dec.getOrDefault(roman[i], 0)
         } else {
