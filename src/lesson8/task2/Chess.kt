@@ -2,6 +2,7 @@
 
 package lesson8.task2
 
+import java.util.*
 import kotlin.math.abs
 
 /**
@@ -41,6 +42,9 @@ data class Square(val column: Int, val row: Int) {
  * Если нотация некорректна, бросить IllegalArgumentException
  */
 fun square(notation: String): Square {
+    if (notation == "") {
+        throw IllegalArgumentException()
+    }
     if (Square(notation[0] - 'a' + 1, notation[1].toString().toInt()).notation() == notation) {
         return Square(notation[0] - 'a' + 1, notation[1].toString().toInt())
     } else {
@@ -209,7 +213,38 @@ fun bishopTrajectory(start: Square, end: Square): List<Square> {
  * Пример: kingMoveNumber(Square(3, 1), Square(6, 3)) = 3.
  * Король может последовательно пройти через клетки (4, 2) и (5, 2) к клетке (6, 3).
  */
-fun kingMoveNumber(start: Square, end: Square): Int = TODO()
+fun kingMoveNumber(start: Square, end: Square): Int {
+    require(start.inside() && end.inside())
+    val chessboard = mutableListOf(
+        mutableListOf(0, 0, 0, 0, 0, 0, 0, 0),
+        mutableListOf(0, 0, 0, 0, 0, 0, 0, 0),
+        mutableListOf(0, 0, 0, 0, 0, 0, 0, 0),
+        mutableListOf(0, 0, 0, 0, 0, 0, 0, 0),
+        mutableListOf(0, 0, 0, 0, 0, 0, 0, 0),
+        mutableListOf(0, 0, 0, 0, 0, 0, 0, 0),
+        mutableListOf(0, 0, 0, 0, 0, 0, 0, 0),
+        mutableListOf(0, 0, 0, 0, 0, 0, 0, 0)
+    )
+    val dd =
+        listOf(Pair(-1, -1), Pair(-1, 1), Pair(1, -1), Pair(1, 1), Pair(0, 1), Pair(1, 0), Pair(0, -1), Pair(-1, 0))
+    val que = mutableListOf(Square(start.column - 1, start.row - 1))
+    chessboard[start.column - 1][start.row - 1] = 1
+    while (que.isNotEmpty()) {
+        val way = que[0]
+        que.removeAt(0)
+        for (i in 0 until 8) {
+            val it = way.column + dd[i].first
+            val jt = way.row + dd[i].second
+            if (Square(it + 1, jt + 1).inside()) {
+                if (chessboard[it][jt] == 0) {
+                    chessboard[it][jt] = chessboard[way.column][way.row] + 1
+                    que.add(Square(it, jt))
+                }
+            }
+        }
+    }
+    return chessboard[end.column - 1][end.row - 1] - 1
+}
 
 /**
  * Сложная
@@ -250,6 +285,8 @@ fun kingTrajectory(start: Square, end: Square): List<Square> = TODO()
  * Пример: knightMoveNumber(Square(3, 1), Square(6, 3)) = 3.
  * Конь может последовательно пройти через клетки (5, 2) и (4, 4) к клетке (6, 3).
  */
+
+
 fun knightMoveNumber(start: Square, end: Square): Int = TODO()
 
 /**

@@ -3,7 +3,6 @@
 package lesson8.task1
 
 import lesson1.task1.sqr
-import lesson5.task1.canBuildFrom
 import kotlin.math.*
 
 /**
@@ -114,7 +113,7 @@ data class Segment(val begin: Point, val end: Point) {
  * Если в множестве менее двух точек, бросить IllegalArgumentException
  */
 fun diameter(vararg points: Point): Segment {
-    if (points.size < 2) throw IllegalArgumentException()
+    require(points.size >= 2)
     var cn = -1.0
     var ans = Segment(Point(0.0, 0.0), Point(0.0, 0.0))
     for (i in 0 until points.size - 1) {
@@ -160,15 +159,20 @@ class Line(val b: Double, val angle: Double) {
      * Для этого необходимо составить и решить систему из двух уравнений (каждое для своей прямой)
      */
     fun crossPoint(other: Line): Point {
-        return if (angle * 2 == PI) {
-            val x1 = (b * cos(other.angle) - other.b * cos(angle)) / sin(other.angle - angle)
-            val y1 = (x1 * sin(other.angle) + other.b) / cos(other.angle)
-            Point(x1, y1)
-        } else {
-            val x1 = (other.b * cos(angle) - b * cos(other.angle)) / sin(angle - other.angle)
-            val y1 = (x1 * sin(angle) + b) / cos(angle)
-            Point(x1, y1)
+        return try {
+            if (angle * 2 == PI) {
+                val x1 = (b * cos(other.angle) - other.b * cos(angle)) / sin(other.angle - angle)
+                val y1 = (x1 * sin(other.angle) + other.b) / cos(other.angle)
+                Point(x1, y1)
+            } else {
+                val x1 = (other.b * cos(angle) - b * cos(other.angle)) / sin(angle - other.angle)
+                val y1 = (x1 * sin(angle) + b) / cos(angle)
+                Point(x1, y1)
+            }
+        } catch (e: Exception) {
+            Point(0.0, 0.0)
         }
+
     }
 
     override fun equals(other: Any?) = other is Line && angle == other.angle && b == other.b
@@ -263,20 +267,13 @@ fun circleByThreePoints(a: Point, b: Point, c: Point): Circle {
  * соединяющий две самые удалённые точки в данном множестве.
  */
 fun minContainingCircle(vararg points: Point): Circle {
-    if (points.isEmpty()) {
-        throw java.lang.IllegalArgumentException()
+    require(points.isNotEmpty())
+    if (points.size == 1) {
+        return Circle(points[0], 0.0)
     }
-    var center = points[0]
-    var rad = 0.0
-    for (i in points) {
-        for (j in points) {
-            val dist = i.distance(j)
-            if (dist > rad) {
-                rad = dist / 2
-                center = Point((i.x + j.x) / 2, (i.y + j.y) / 2)
-            }
-        }
-    }
+    val item = diameter(*points)
+    var center = Point((item.begin.x + item.end.x) / 2, (item.begin.y + item.end.y) / 2)
+    var rad = item.begin.distance(item.end) / 2
     var flag = true
     for (i in points) {
         if (rad + 1e-30 < i.distance(center)) {
