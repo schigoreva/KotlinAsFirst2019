@@ -158,22 +158,17 @@ class Line(val b: Double, val angle: Double) {
      * Найти точку пересечения с другой линией.
      * Для этого необходимо составить и решить систему из двух уравнений (каждое для своей прямой)
      */
-    fun crossPoint(other: Line): Point {
-        return try {
-            if (angle * 2 == PI) {
-                val x1 = (b * cos(other.angle) - other.b * cos(angle)) / sin(other.angle - angle)
-                val y1 = (x1 * sin(other.angle) + other.b) / cos(other.angle)
-                Point(x1, y1)
-            } else {
-                val x1 = (other.b * cos(angle) - b * cos(other.angle)) / sin(angle - other.angle)
-                val y1 = (x1 * sin(angle) + b) / cos(angle)
-                Point(x1, y1)
-            }
-        } catch (e: Exception) {
-            Point(0.0, 0.0)
+    fun crossPoint(other: Line): Point =
+        if (angle * 2 == PI) {
+            val x1 = (b * cos(other.angle) - other.b * cos(angle)) / sin(other.angle - angle)
+            val y1 = (x1 * sin(other.angle) + other.b) / cos(other.angle)
+            Point(x1, y1)
+        } else {
+            val x1 = (other.b * cos(angle) - b * cos(other.angle)) / sin(angle - other.angle)
+            val y1 = (x1 * sin(angle) + b) / cos(angle)
+            Point(x1, y1)
         }
 
-    }
 
     override fun equals(other: Any?) = other is Line && angle == other.angle && b == other.b
 

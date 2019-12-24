@@ -248,6 +248,14 @@ fun convert(n: Int, base: Int): List<Int> {
  * Использовать функции стандартной библиотеки, напрямую и полностью решающие данную задачу
  * (например, n.toString(base) и подобные), запрещается.
  */
+
+fun chrToDigit(chr: Char): Int =
+    if (chr in '0'..'9') {
+        chr.toString().toInt()
+    } else {
+        chr.toInt() - 87
+    }
+
 fun convertToString(n: Int, base: Int): String {
     val chr = 87
     val digit = 9
@@ -282,12 +290,11 @@ fun decimal(digits: List<Int>, base: Int): Int = polynom(digits.reversed(), base
  * Использовать функции стандартной библиотеки, напрямую и полностью решающие данную задачу
  * (например, str.toInt(base)), запрещается.
  */
+
 fun decimalFromString(str: String, base: Int): Int {
     val v = mutableListOf<Int>()
-    val chr = 87
-    val noDiigit = 97
     for (i in 0 until str.length) {
-        v += if (str[i].toInt() >= noDiigit) str[i].toInt() - chr else str[i].toString().toInt()
+        v += chrToDigit(str[i])
     }
     return decimal(v.toList(), base)
 }

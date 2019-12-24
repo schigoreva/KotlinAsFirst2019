@@ -63,7 +63,7 @@ data class Hexagon(val center: HexPoint, val radius: Int) {
      * (расстояние между точками 32 и 24)
      */
     fun distance(other: Hexagon): Int = TODO()
-        //max(0, center.distance(other.center) - (radius + other.radius))
+    //max(0, center.distance(other.center) - (radius + other.radius))
 
     /**
      * Тривиальная
