@@ -25,7 +25,7 @@ data class Square(val column: Int, val row: Int) {
      * В нотации, колонки обозначаются латинскими буквами от a до h, а ряды -- цифрами от 1 до 8.
      * Для клетки не в пределах доски вернуть пустую строку
      */
-    fun notation(): String = if (this.inside()) {
+    fun notation(): String = if (inside()) {
         val columnChar = 'a' + column - 1
         "$columnChar$row"
     } else {
@@ -43,8 +43,9 @@ data class Square(val column: Int, val row: Int) {
  */
 fun square(notation: String): Square {
     require(notation.length == 2 && notation[1].toString().toIntOrNull() != null)
-    if (Square(notation[0] - 'a' + 1, notation[1].toString().toInt()).notation() == notation) {
-        return Square(notation[0] - 'a' + 1, notation[1].toString().toInt())
+    val ans = Square(notation[0] - 'a' + 1, notation[1].toString().toInt())
+    if (ans.notation() == notation) {
+        return ans
     } else {
         throw IllegalArgumentException()
     }
@@ -73,13 +74,20 @@ fun square(notation: String): Square {
  * Пример: rookMoveNumber(Square(3, 1), Square(6, 3)) = 2
  * Ладья может пройти через клетку (3, 3) или через клетку (6, 1) к клетке (6, 3).
  */
-fun rookMoveNumber(start: Square, end: Square): Int {
-    if (start.inside() && end.inside()) {
-        return (if (start.row - end.row != 0) 1 else 0) + if (start.column - end.column != 0) 1 else 0
+fun rookMoveNumber(start: Square, end: Square): Int = if (start.inside() && end.inside()) {
+    if (start.row - end.row != 0) {
+        1
     } else {
-        throw IllegalArgumentException()
+        0
+    } + if (start.column - end.column != 0) {
+        1
+    } else {
+        0
     }
+} else {
+    throw IllegalArgumentException()
 }
+
 
 /**
  * Средняя
@@ -129,12 +137,8 @@ fun rookTrajectory(start: Square, end: Square): List<Square> {
  * Слон может пройти через клетку (6, 4) к клетке (3, 7).
  */
 
-fun oneColor(first: Square, second: Square): Boolean {
-    if ((first.column % 2 == first.row % 2) == (second.column % 2 == second.row % 2)) {
-        return true
-    }
-    return false
-}
+fun oneColor(first: Square, second: Square): Boolean =
+    (first.column % 2 == first.row % 2) == (second.column % 2 == second.row % 2)
 
 fun bishopMoveNumber(start: Square, end: Square): Int {
     return if (start.inside() && end.inside()) {
@@ -177,10 +181,10 @@ fun bishopTrajectory(start: Square, end: Square): List<Square> {
             return listOf(start, end)
         }
         for (k in 1 until 8) {
-            for (d in 0 until 4) {
+            for (event in 0 until 4) {
                 val mid = Square(
-                    start.column - k * (if (d / 2 == 1) -1 else 1),
-                    start.row - k * (if (d % 2 == 1) -1 else 1)
+                    start.column - k * (if (event / 2 == 1) -1 else 1),
+                    start.row - k * (if (event % 2 == 1) -1 else 1)
                 )
                 if (mid.inside() && bishopMoveNumber(mid, end) == 1) {
                     return listOf(start, mid, end)
@@ -212,123 +216,18 @@ fun bishopTrajectory(start: Square, end: Square): List<Square> {
  * Король может последовательно пройти через клетки (4, 2) и (5, 2) к клетке (6, 3).
  */
 
-fun myBfs(start: Square, end: Square, step: List<Pair<Int, Int>>): Int {
-    require(start.inside() && end.inside())
-    val chessboard = mutableListOf(
-        mutableListOf(0, 0, 0, 0, 0, 0, 0, 0),
-        mutableListOf(0, 0, 0, 0, 0, 0, 0, 0),
-        mutableListOf(0, 0, 0, 0, 0, 0, 0, 0),
-        mutableListOf(0, 0, 0, 0, 0, 0, 0, 0),
-        mutableListOf(0, 0, 0, 0, 0, 0, 0, 0),
-        mutableListOf(0, 0, 0, 0, 0, 0, 0, 0),
-        mutableListOf(0, 0, 0, 0, 0, 0, 0, 0),
-        mutableListOf(0, 0, 0, 0, 0, 0, 0, 0)
-    )
-    val que = mutableListOf(Square(start.column - 1, start.row - 1))
-    chessboard[start.column - 1][start.row - 1] = 1
-    while (que.isNotEmpty()) {
-        val way = que[0]
-        que.removeAt(0)
-        for (i in 0 until step.size) {
-            val it = way.column + step[i].first
-            val jt = way.row + step[i].second
-            if (Square(it + 1, jt + 1).inside()) {
-                if (chessboard[it][jt] == 0) {
-                    chessboard[it][jt] = chessboard[way.column][way.row] + 1
-                    que.add(Square(it, jt))
-                }
-            }
-        }
-    }
-    return chessboard[end.column - 1][end.row - 1] - 1
-}
-
 fun myBfsWay(start: Square, end: Square, step: List<Pair<Int, Int>>): List<Square> {
     require(start.inside() && end.inside())
-    val chessboard = listOf(
-        mutableListOf(
-            listOf<Square>(),
-            listOf(),
-            listOf(),
-            listOf(),
-            listOf(),
-            listOf(),
-            listOf(),
-            listOf()
-        ),
-        mutableListOf(
-            listOf(),
-            listOf(),
-            listOf(),
-            listOf(),
-            listOf(),
-            listOf(),
-            listOf(),
-            listOf()
-        ),
-        mutableListOf(
-            listOf(),
-            listOf(),
-            listOf(),
-            listOf(),
-            listOf(),
-            listOf(),
-            listOf(),
-            listOf()
-        ),
-        mutableListOf(
-            listOf(),
-            listOf(),
-            listOf(),
-            listOf(),
-            listOf(),
-            listOf(),
-            listOf(),
-            listOf()
-        ),
-        mutableListOf(
-            listOf(),
-            listOf(),
-            listOf(),
-            listOf(),
-            listOf(),
-            listOf(),
-            listOf(),
-            listOf()
-        ),
-        mutableListOf(
-            listOf(),
-            listOf(),
-            listOf(),
-            listOf(),
-            listOf(),
-            listOf(),
-            listOf(),
-            listOf()
-        ),
-        mutableListOf(
-            listOf(),
-            listOf(),
-            listOf(),
-            listOf(),
-            listOf(),
-            listOf(),
-            listOf(),
-            listOf()
-        ),
-        mutableListOf(
-            listOf(),
-            listOf(),
-            listOf(),
-            listOf(),
-            listOf(),
-            listOf(),
-            listOf(),
-            listOf()
-        )
-    )
+    val chessboard = mutableListOf<MutableList<MutableList<Square>>>()
+    for (i in 0..7) {
+        val item = mutableListOf<MutableList<Square>>()
+        for (j in 0..7) {
+            item += mutableListOf<Square>()
+        }
+        chessboard += item
+    }
     val que = mutableListOf(Square(start.column - 1, start.row - 1))
-    chessboard[start.column - 1][start.row - 1] = listOf(start)
+    chessboard[start.column - 1][start.row - 1] = mutableListOf(start)
     while (que.isNotEmpty()) {
         val way = que[0]
         que.removeAt(0)
@@ -337,7 +236,8 @@ fun myBfsWay(start: Square, end: Square, step: List<Pair<Int, Int>>): List<Squar
             val jt = way.row + step[i].second
             if (Square(it + 1, jt + 1).inside()) {
                 if (chessboard[it][jt].isEmpty()) {
-                    chessboard[it][jt] = chessboard[way.column][way.row] + Square(it + 1, jt + 1)
+                    chessboard[it][jt] =
+                        (chessboard[way.column][way.row] + Square(it + 1, jt + 1)).toMutableList()
                     que.add(Square(it, jt))
                 }
             }
@@ -346,11 +246,7 @@ fun myBfsWay(start: Square, end: Square, step: List<Pair<Int, Int>>): List<Squar
     return chessboard[end.column - 1][end.row - 1]
 }
 
-fun kingMoveNumber(start: Square, end: Square): Int {
-    val step =
-        listOf(Pair(-1, -1), Pair(-1, 1), Pair(1, -1), Pair(1, 1), Pair(0, 1), Pair(1, 0), Pair(0, -1), Pair(-1, 0))
-    return myBfs(start, end, step)
-}
+fun kingMoveNumber(start: Square, end: Square): Int = kingTrajectory(start, end).size - 1
 
 /**
  * Сложная
@@ -397,11 +293,8 @@ fun kingTrajectory(start: Square, end: Square): List<Square> {
  */
 
 
-fun knightMoveNumber(start: Square, end: Square): Int {
-    val step =
-        listOf(Pair(1, 2), Pair(2, 1), Pair(-1, -2), Pair(-2, -1), Pair(-1, 2), Pair(1, -2), Pair(-2, 1), Pair(2, -1))
-    return myBfs(start, end, step)
-}
+fun knightMoveNumber(start: Square, end: Square): Int = knightTrajectory(start, end).size - 1
+
 
 /**
  * Очень сложная
@@ -426,5 +319,5 @@ fun knightMoveNumber(start: Square, end: Square): Int {
 fun knightTrajectory(start: Square, end: Square): List<Square> {
     val step =
         listOf(Pair(1, 2), Pair(2, 1), Pair(-1, -2), Pair(-2, -1), Pair(-1, 2), Pair(1, -2), Pair(-2, 1), Pair(2, -1))
-    return  myBfsWay(start, end, step)
+    return myBfsWay(start, end, step)
 }

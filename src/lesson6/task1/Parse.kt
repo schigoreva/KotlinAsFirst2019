@@ -145,6 +145,7 @@ fun dateDigitToStr(digital: String): String {
         else -> day.toString() + monthStr[date[1].toInt() - 1] + date[2]
     }
 }
+
 /**
  * Средняя
  *
@@ -161,6 +162,7 @@ fun dateDigitToStr(digital: String): String {
  */
 fun flattenPhoneNumber(phone: String): String {
     try {
+        val cst = 48
         if (phone == "+") return ""
         var ans = ""
         var flagLeft = false
@@ -168,10 +170,12 @@ fun flattenPhoneNumber(phone: String): String {
         var cnt = 0
         for (i in 0 until phone.length) {
             if (i == 0 && phone[i] == '+') ans = "+"
-            else if (phone[i].toInt() - 48 in 0..9) {
+            else if (phone[i].toInt() - cst in 0..9) {
                 ans += phone[i]
                 flagDigit = flagLeft
-            } else if ((phone[i] == '(' && flagLeft) || (phone[i] == ')' && !flagLeft) || (phone[i] == ')' && flagLeft && !flagDigit)) return ""
+            } else if ((phone[i] == '(' && flagLeft) ||
+                (phone[i] == ')' && !flagLeft) ||
+                (phone[i] == ')' && flagLeft && !flagDigit)) return ""
             else if (phone[i] == '(' || phone[i] == ')') {
                 cnt++
                 flagLeft = !flagLeft

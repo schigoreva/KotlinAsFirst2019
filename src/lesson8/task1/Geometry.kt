@@ -239,18 +239,19 @@ fun circleByThreePoints(a: Point, b: Point, c: Point): Circle {
     val yA = a.y
     val yB = b.y
     val yC = c.y
-    if ((xA * (yB - yC) + xB * (yC - yA) + xC * (yA - yB)) == 0.0) {
+    var l = (xA * (yB - yC) + xB * (yC - yA) + xC * (yA - yB))
+    if (l == 0.0) {
         return Circle(a, 0.0)
     }
-    val l = (xA * (yB - yC) + xB * (yC - yA) + xC * (yA - yB)) * 2
-    val myCenter = Point(
-        ((yA * (xB.pow(2) + yB.pow(2) - xC.pow(2) - yC.pow(2)) +
-                yB * (xC.pow(2) + yC.pow(2) - xA.pow(2) - yA.pow(2)) +
-                yC * (xA.pow(2) + yA.pow(2) - xB.pow(2) - yB.pow(2))) / -l),
-        ((xA * (xB.pow(2) + yB.pow(2) - xC.pow(2) - yC.pow(2)) +
-                xB * (xC.pow(2) + yC.pow(2) - xA.pow(2) - yA.pow(2)) +
-                xC * (xA.pow(2) + yA.pow(2) - xB.pow(2) - yB.pow(2))) / l)
-    )
+    l *= 2
+    val item = xB.pow(2) + yB.pow(2) - xC.pow(2) - yC.pow(2)
+    val xCenter = (yA * item +
+            yB * (xC.pow(2) + yC.pow(2) - xA.pow(2) - yA.pow(2)) +
+            yC * (xA.pow(2) + yA.pow(2) - xB.pow(2) - yB.pow(2))) / -l
+    val yCenter = (xA * item +
+            xB * (xC.pow(2) + yC.pow(2) - xA.pow(2) - yA.pow(2)) +
+            xC * (xA.pow(2) + yA.pow(2) - xB.pow(2) - yB.pow(2))) / l
+    val myCenter = Point(xCenter, yCenter)
     val myRadius = (a.distance(myCenter) + b.distance(myCenter) + c.distance(myCenter)) / 3
     return Circle(myCenter, myRadius)
 }
