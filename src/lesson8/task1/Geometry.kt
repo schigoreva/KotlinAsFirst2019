@@ -237,48 +237,4 @@ fun circleByThreePoints(a: Point, b: Point, c: Point): Circle = Circle(
  * соединяющий две самые удалённые точки в данном множестве.
  */
 fun minContainingCircle(vararg points: Point): Circle = TODO()
-/*{
-    require(points.isNotEmpty())
-    if (points.size == 1) {
-        return Circle(points[0], 0.0)
-    }
-    val item = diameter(*points)
-    var center = Point((item.begin.x + item.end.x) / 2, (item.begin.y + item.end.y) / 2)
-    var rad = item.begin.distance(item.end) / 2
-    var flag = true
-    for (i in points) {
-        if (rad + 1e-30 < i.distance(center)) {
-            flag = false
-            break
-        }
-    }
-    if (flag) {
-        return Circle(center, rad)
-    }
-    var first = true
-    for (i in points) {
-        for (j in points) {
-            if (i == j) continue
-            for (z in points) {
-                if (i == z || j == z) continue
-                val c = circleByThreePoints(i, j, z)
-                var fl = true
-                for (t in points) {
-                    if (c.radius + 1e-18 < t.distance(c.center)) {
-                        fl = false
-                        break
-                    }
-                }
-                if (fl) {
-                    if (c.radius < rad || first) {
-                        rad = c.radius
-                        center = c.center
-                        first = false
-                    }
-                }
-            }
-        }
-    }
-    return Circle(center, rad)
-}
-*/
+
