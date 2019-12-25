@@ -158,16 +158,12 @@ class Line(val b: Double, val angle: Double) {
      * Найти точку пересечения с другой линией.
      * Для этого необходимо составить и решить систему из двух уравнений (каждое для своей прямой)
      */
-    fun crossPoint(other: Line): Point =
-        if (angle * 2 == PI) {
-            val x1 = (b * cos(other.angle) - other.b * cos(angle)) / sin(other.angle - angle)
-            val y1 = (x1 * sin(other.angle) + other.b) / cos(other.angle)
-            Point(x1, y1)
-        } else {
-            val x1 = (other.b * cos(angle) - b * cos(other.angle)) / sin(angle - other.angle)
-            val y1 = (x1 * sin(angle) + b) / cos(angle)
-            Point(x1, y1)
-        }
+    fun crossPoint(other: Line): Point {
+        val sin1 = sin(angle - other.angle)
+        val x1 = (other.b * cos(angle) - b * cos(other.angle)) / sin1
+        val y1 = (b * sin(other.angle) - other.b * sin(angle)) / sin1 * -1
+        return Point(x1, y1)
+    }
 
 
     override fun equals(other: Any?) = other is Line && angle == other.angle && b == other.b
@@ -204,11 +200,8 @@ fun lineByPoints(a: Point, b: Point): Line = lineBySegment(Segment(a, b))
  *
  * Построить серединный перпендикуляр по отрезку или по двум точкам
  */
-fun bisectorByPoints(a: Point, b: Point): Line {
-    val x = (a.x + b.x) / 2
-    val y = (a.y + b.y) / 2
-    return lineByPoints(Point(x, y), Point(x + a.y - b.y, y + b.x - a.x))
-}
+fun bisectorByPoints(a: Point, b: Point): Line =
+    Line(Point((a.x + b.x) / 2, (a.y + b.y) / 2), (lineByPoints(a, b).angle + PI / 2) % PI)
 
 /**
  * Средняя
@@ -227,29 +220,10 @@ fun findNearestCirclePair(vararg circles: Circle): Pair<Circle, Circle> = TODO()
  * (построить окружность по трём точкам, или
  * построить окружность, описанную вокруг треугольника - эквивалентная задача).
  */
-fun circleByThreePoints(a: Point, b: Point, c: Point): Circle {
-    val xA = a.x
-    val xB = b.x
-    val xC = c.x
-    val yA = a.y
-    val yB = b.y
-    val yC = c.y
-    var l = (xA * (yB - yC) + xB * (yC - yA) + xC * (yA - yB))
-    if (l == 0.0) {
-        return Circle(a, 0.0)
-    }
-    l *= 2
-    val item = xB.pow(2) + yB.pow(2) - xC.pow(2) - yC.pow(2)
-    val xCenter = (yA * item +
-            yB * (xC.pow(2) + yC.pow(2) - xA.pow(2) - yA.pow(2)) +
-            yC * (xA.pow(2) + yA.pow(2) - xB.pow(2) - yB.pow(2))) / -l
-    val yCenter = (xA * item +
-            xB * (xC.pow(2) + yC.pow(2) - xA.pow(2) - yA.pow(2)) +
-            xC * (xA.pow(2) + yA.pow(2) - xB.pow(2) - yB.pow(2))) / l
-    val myCenter = Point(xCenter, yCenter)
-    val myRadius = (a.distance(myCenter) + b.distance(myCenter) + c.distance(myCenter)) / 3
-    return Circle(myCenter, myRadius)
-}
+fun circleByThreePoints(a: Point, b: Point, c: Point): Circle = Circle(
+    bisectorByPoints(a, b).crossPoint(bisectorByPoints(b, c)),
+    a.distance(b) * b.distance(c) * c.distance(a) / 4 / Triangle(a, b, c).area()
+)
 
 /**
  * Очень сложная
