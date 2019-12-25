@@ -79,6 +79,21 @@ fun isNull(list: List<Any?>): Boolean {
     return list.size != list2.size
 }
 
+private val monthStr = listOf(
+    "января",
+    "февраля",
+    "марта",
+    "апреля",
+    "мая",
+    "июня",
+    "июля",
+    "августа",
+    "сентября",
+    "октября",
+    "ноября",
+    "декабря"
+)
+
 fun dateStrToDigit(str: String): String {
     val date = str.split(" ")
     if (date.size != 3) {
@@ -86,24 +101,14 @@ fun dateStrToDigit(str: String): String {
     }
     val day = date[0].toIntOrNull()
     val year = date[2].toIntOrNull()
-    val monthStr = mapOf(
-        "января" to 1,
-        "февраля" to 2,
-        "марта" to 3,
-        "апреля" to 4,
-        "мая" to 5,
-        "июня" to 6,
-        "июля" to 7,
-        "августа" to 8,
-        "сентября" to 9,
-        "октября" to 10,
-        "ноября" to 11,
-        "декабря" to 12
-    )
+    val month = monthStr.indexOf(date[1]) + 1
+    if (month == 0) {
+        return ""
+    }
     return when {
-        isNull(listOf(day, year, monthStr[date[1]])) -> ""
-        day!! > daysInMonth(monthStr[date[1]]!!, year!!) -> ""
-        else -> String.format("%02d.%02d.%d", day, monthStr[date[1]], year)
+        isNull(listOf(day, year)) -> ""
+        day!! > daysInMonth(month, year!!) -> ""
+        else -> String.format("%02d.%02d.%d", day, month, year)
     }
 }
 
@@ -125,24 +130,10 @@ fun dateDigitToStr(digital: String): String {
     }
     val day = date[0].toIntOrNull()
     val year = date[2].toIntOrNull()
-    val monthStr = listOf(
-        " января ",
-        " февраля ",
-        " марта ",
-        " апреля ",
-        " мая ",
-        " июня ",
-        " июля ",
-        " августа ",
-        " сентября ",
-        " октября ",
-        " ноября ",
-        " декабря "
-    )
     return when {
         isNull(listOf(day, year, date[1].toIntOrNull())) -> ""
         day!! > daysInMonth(date[1].toInt(), year!!) -> ""
-        else -> day.toString() + monthStr[date[1].toInt() - 1] + date[2]
+        else -> String.format("%d %s %d", day, monthStr[date[1].toInt() - 1], year)
     }
 }
 
