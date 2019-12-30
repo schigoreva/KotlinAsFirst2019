@@ -238,7 +238,10 @@ fun plusMinus(expression: String): Int {
             if (expression[i] == ' ') continue
             if (!fl && !(expression[i] == '+' || expression[i] == '-')) {
                 var ind = i
-                while (ind < expression.length && !(expression[ind] == '+' || expression[ind] == '-' || expression[ind] == ' ')) ind++
+                while (ind < expression.length &&
+                    !(expression[ind] == '+' || expression[ind] == '-' || expression[ind] == ' ')) {
+                    ind++
+                }
                 val ar = expression.substring(i, ind).toInt()
                 ans += if (plm) ar else -ar
                 fl = !fl
