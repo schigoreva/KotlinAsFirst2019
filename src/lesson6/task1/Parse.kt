@@ -151,31 +151,12 @@ fun dateDigitToStr(digital: String): String {
  * PS: Дополнительные примеры работы функции можно посмотреть в соответствующих тестах.
  */
 fun flattenPhoneNumber(phone: String): String {
-    try {
-        val cst = 48
-        if (phone == "+") return ""
-        var ans = ""
-        var flagLeft = false
-        var flagDigit = false
-        var cnt = 0
-        for (i in 0 until phone.length) {
-            if (i == 0 && phone[i] == '+') ans = "+"
-            else if (phone[i].toInt() - cst in 0..9) {
-                ans += phone[i]
-                flagDigit = flagLeft
-            } else if ((phone[i] == '(' && flagLeft) ||
-                (phone[i] == ')' && !flagLeft) ||
-                (phone[i] == ')' && flagLeft && !flagDigit)) return ""
-            else if (phone[i] == '(' || phone[i] == ')') {
-                cnt++
-                flagLeft = !flagLeft
-            } else if (phone[i] != '-' && phone[i] != ' ') return ""
-        }
-        return if (cnt != 0 && cnt != 2) ""
-        else ans
-    } catch (e: Exception) {
-        return ""
-    }
+    val phoneFilter = phone.filter { it != ' ' }
+    if (!(Regex("""[+\d\-()]+""")).matches(phoneFilter) ||
+        (Regex("""\([^\d -]""")).containsMatchIn(phoneFilter) ||
+        phone == "+"
+    ) return ""
+    return phoneFilter.filter { it !in listOf('(', ')', '-') }
 }
 
 /**
@@ -189,16 +170,15 @@ fun flattenPhoneNumber(phone: String): String {
  * При нарушении формата входной строки или при отсутствии в ней чисел, вернуть -1.
  */
 fun bestLongJump(jumps: String): Int {
-    try {
-        val jumps1 = jumps.split(" ")
-        for (str in jumps1) {
-            if ('%' in str && '-' in str) return -1
-        }
-        val records = jumps.split(" ", "%", "-").filter { it != "" }.map { it.toInt() }
-        if (records.isEmpty()) return -1
-        return records.max()!!
-    } catch (e: Exception) {
+    if (!jumps.matches(Regex("""(\d+[\- %]*)+"""))) {
         return -1
+    }
+    val jumps1 = jumps.split(" ").filter { it.toIntOrNull() != null }
+    val jumps2 = jumps1.map { it.toInt() }
+    return if (jumps2.isEmpty()) {
+        -1
+    } else {
+        jumps2.max()!!
     }
 }
 
@@ -401,8 +381,7 @@ fun fromRoman(roman: String): Int {
  */
 fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
     val mem = mutableListOf<Int>()
-    var n = cells
-    for (i in 0 until n) {
+    for (i in 0 until cells) {
         mem.add(0)
     }
     mem.fill(0)
@@ -423,7 +402,7 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
     if (bal != 0) {
         throw java.lang.IllegalArgumentException()
     }
-    var pos = n / 2
+    var pos = cells / 2
     var cnt = 0
     var i = 0
     while (i < commands.length && cnt < limit) {
@@ -456,7 +435,7 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
             }
         }
         i++
-        if (pos < 0 || pos >= n) {
+        if (pos < 0 || pos >= cells) {
             throw IllegalStateException()
         }
     }
