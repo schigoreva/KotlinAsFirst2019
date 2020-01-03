@@ -40,7 +40,6 @@ data class HexPoint(val x: Int, val y: Int) {
      * Например, путь межу гексами 16 и 41 (см. выше) может проходить через 25, 34, 43 и 42 и имеет длину 5.
      */
     fun distance(other: HexPoint): Int = TODO()
-    //max(abs(x - other.x), abs(y - other.y))
 
     override fun toString(): String = "$y.$x"
 }
@@ -64,7 +63,6 @@ data class Hexagon(val center: HexPoint, val radius: Int) {
      * (расстояние между точками 32 и 24)
      */
     fun distance(other: Hexagon): Int = TODO()
-    //max(0, center.distance(other.center) - (radius + other.radius))
 
     /**
      * Тривиальная

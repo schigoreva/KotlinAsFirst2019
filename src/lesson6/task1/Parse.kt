@@ -194,28 +194,17 @@ fun bestLongJump(jumps: String): Int {
  * вернуть -1.
  */
 fun bestHighJump(jumps: String): Int {
-    try {
-        val records = jumps.split(" ")
-        var ans = -1
-        if (records.size % 2 == 1) {
-            return -1
-        }
-        for (i in 0 until records.size step 2) {
-            val curValue = records[i].toInt()
-            if (records[i + 1].count { it == '+' }
-                + records[i + 1].count { it == '%' }
-                + records[i + 1].count { it == '-' } != records[i + 1].length
-                || records[i + 1].isEmpty()) {
-                return -1
-            }
-            if (records[i + 1].contains('+')) {
-                ans = max(ans, curValue)
-            }
-        }
-        return ans
-    } catch (e: Exception) {
+    if (!jumps.matches(Regex("""(\d+ [%+-]+ ?)+"""))) {
         return -1
     }
+    val jumps1 = jumps.split(" ")
+    var ans = -1
+    for (jump in 1 until jumps1.size step 2) {
+        if (jumps1[jump].any { it == '+' }) {
+            ans = maxOf(ans, jumps1[jump - 1].toInt())
+        }
+    }
+    return ans
 }
 
 /**

@@ -142,50 +142,35 @@ fun alignFileByWidth(inputName: String, outputName: String) {
     val lines = mutableListOf<String>()
     var maxLen = 0
     for (line in File(inputName).readLines()) {
-        var flag = false
-        lines.add(buildString {
-            var isSpace = false
-            for (c in line) {
-                if (c == ' ') {
-                    isSpace = flag
-                } else {
-                    if (isSpace) {
-                        append(' ')
-                    }
-                    append(c)
-                    isSpace = false
-                    flag = true
-                }
-            }
-        })
+        lines.add(line.trim())
         maxLen = max(maxLen, lines[lines.size - 1].length)
     }
-    val out = File(outputName).bufferedWriter()
-    for (line in lines) {
-        val words = line.split(' ')
-        if (words.size == 1) {
-            out.write(words[0])
-        } else if (words.isNotEmpty()) {
-            val cnt = maxLen - line.length
-            val oneBlock = cnt / (words.size - 1)
-            val cntBigBlocks = cnt - oneBlock * (words.size - 1)
-            out.write(buildString {
-                for (i in 0 until words.size - 1) {
-                    append(words[i])
-                    append(' ')
-                    for (j in 0 until oneBlock) {
+    File(outputName).bufferedWriter().use {
+        for (line in lines) {
+            val words = line.split(' ')
+            if (words.size == 1) {
+                it.write(words[0])
+            } else if (words.isNotEmpty()) {
+                val cnt = maxLen - line.length
+                val oneBlock = cnt / (words.size - 1)
+                val cntBigBlocks = cnt - oneBlock * (words.size - 1)
+                it.write(buildString {
+                    for (i in 0 until words.size - 1) {
+                        append(words[i])
                         append(' ')
+                        for (j in 0 until oneBlock) {
+                            append(' ')
+                        }
+                        if (i < cntBigBlocks) {
+                            append(' ')
+                        }
                     }
-                    if (i < cntBigBlocks) {
-                        append(' ')
-                    }
-                }
-                append(words[words.size - 1])
-            })
+                    append(words[words.size - 1])
+                })
+            }
+            it.newLine()
         }
-        out.newLine()
     }
-    out.close()
 }
 
 /**
