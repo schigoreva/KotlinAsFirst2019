@@ -191,6 +191,7 @@ fun alignFileByWidth(inputName: String, outputName: String) {
  * Ключи в ассоциативном массиве должны быть в нижнем регистре.
  *
  */
+
 fun top20Words(inputName: String): Map<String, Int> = TODO()
 
 /**

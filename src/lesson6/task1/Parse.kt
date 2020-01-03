@@ -228,7 +228,8 @@ fun plusMinus(expression: String): Int {
             if (!fl && !(expression[i] == '+' || expression[i] == '-')) {
                 var ind = i
                 while (ind < expression.length &&
-                    !(expression[ind] == '+' || expression[ind] == '-' || expression[ind] == ' ')) {
+                    !(expression[ind] == '+' || expression[ind] == '-' || expression[ind] == ' ')
+                ) {
                     ind++
                 }
                 val ar = expression.substring(i, ind).toInt()
