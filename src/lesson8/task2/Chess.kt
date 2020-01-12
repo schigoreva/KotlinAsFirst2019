@@ -140,8 +140,8 @@ fun rookTrajectory(start: Square, end: Square): List<Square> {
 fun oneColor(first: Square, second: Square): Boolean =
     (first.column % 2 == first.row % 2) == (second.column % 2 == second.row % 2)
 
-fun bishopMoveNumber(start: Square, end: Square): Int {
-    return if (start.inside() && end.inside()) {
+fun bishopMoveNumber(start: Square, end: Square): Int =
+    if (start.inside() && end.inside()) {
         if (oneColor(start, end)) {
             when {
                 start == end -> 0
@@ -152,7 +152,7 @@ fun bishopMoveNumber(start: Square, end: Square): Int {
     } else {
         throw IllegalArgumentException()
     }
-}
+
 
 /**
  * Сложная

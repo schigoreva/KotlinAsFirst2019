@@ -4,7 +4,6 @@ package lesson6.task1
 
 import lesson2.task2.daysInMonth
 import java.lang.IllegalStateException
-import kotlin.math.max
 
 /**
  * Пример
@@ -156,7 +155,7 @@ fun flattenPhoneNumber(phone: String): String {
         (Regex("""\([^\d -]""")).containsMatchIn(phoneFilter) ||
         phone == "+"
     ) return ""
-    return phoneFilter.filter { it !in listOf('(', ')', '-') }
+    return phoneFilter.filter { it !in setOf('(', ')', '-') }
 }
 
 /**
